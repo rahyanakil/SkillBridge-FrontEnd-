@@ -74,7 +74,7 @@ export default function CourseDetailsPage({ course }: IProps) {
               </div>
               <div className="flex items-center gap-2">
                 <User className="w-5 h-5" />
-                <span className="font-medium font-bold">
+                <span className="font-weight: 500 font-bold">
                   By {course.tutor?.user?.name}
                 </span>
               </div>
