@@ -2,7 +2,6 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
   Award,
@@ -14,8 +13,10 @@ import {
   Star,
   User,
 } from "lucide-react";
+import { CourseBookingModal } from "./CourseBookingModal";
+// আপনার ফোল্ডার স্ট্রাকচার অনুযায়ী ইম্পোর্ট পাথ
+// import { CourseBookingModal } from "./CourseBookingModal";
 
-// প্রপস টাইপ ইন্টারফেস
 interface IProps {
   course: any;
 }
@@ -54,11 +55,11 @@ export default function CourseDetailsPage({ course }: IProps) {
           </svg>
         </div>
 
-        {/* Abstract Blurs for eye-catchy look */}
+        {/* Abstract Blurs */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20" />
 
-        <div className="container mx-auto px-5 relative z-10">
-          <div className="max-w-4xl text-white">
+        <div className="container mx-auto px-5 relative z-10 text-white">
+          <div className="max-w-4xl">
             <Badge className="bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-md px-4 py-1.5 mb-6 uppercase tracking-wider font-bold">
               {course.category?.name || "Development"}
             </Badge>
@@ -67,16 +68,12 @@ export default function CourseDetailsPage({ course }: IProps) {
             </h1>
             <div className="flex flex-wrap items-center gap-8 text-white/90">
               <div className="flex items-center gap-2.5">
-                <div className="flex text-yellow-400">
-                  <Star className="w-5 h-5 fill-yellow-400" />
-                </div>
+                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
                 <span className="font-bold text-lg">4.9 (Recent Reviews)</span>
               </div>
               <div className="flex items-center gap-2">
                 <User className="w-5 h-5" />
-                <span className="font-weight: 500 font-bold">
-                  By {course.tutor?.user?.name}
-                </span>
+                <span className="font-bold">By {course.tutor?.user?.name}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Globe className="w-5 h-5" />
@@ -118,11 +115,11 @@ export default function CourseDetailsPage({ course }: IProps) {
                     {course.tutor?.bio || "Expert in modern web technologies."}
                   </p>
                   <div className="flex flex-wrap justify-center md:justify-start gap-4">
-                    <Badge className="bg-violet-50 text-violet-600 border-none font-bold uppercase px-3 py-1">
-                      {course.tutor?.expertise}
+                    <Badge className="bg-violet-50 text-violet-600 border-none font-bold px-3 py-1">
+                      {course.tutor?.expertise || "Teacher"}
                     </Badge>
-                    <Badge className="bg-indigo-50 text-indigo-600 border-none font-bold uppercase px-3 py-1">
-                      {course.tutor?.experience}+ Years Experience
+                    <Badge className="bg-indigo-50 text-indigo-600 border-none font-bold px-3 py-1">
+                      Professional Tutor
                     </Badge>
                   </div>
                 </div>
@@ -144,9 +141,12 @@ export default function CourseDetailsPage({ course }: IProps) {
                 </div>
 
                 <div className="space-y-4">
-                  <Button className="w-full py-8 text-xl font-black rounded-2xl bg-violet-600 hover:bg-violet-700 shadow-xl shadow-violet-100 transition-all hover:scale-[1.02] uppercase tracking-wide">
-                    Enroll Now
-                  </Button>
+                  {/* 🚀 আপনার Booking Modal বাটন এখানে */}
+                  <CourseBookingModal
+                    currentCourseId={course.id}
+                    courseTitle={course.title}
+                  />
+
                   <div className="flex items-center justify-center gap-2 text-green-600 text-xs font-bold uppercase">
                     <ShieldCheck className="w-4 h-4" />
                     30-Day Money-Back Guarantee

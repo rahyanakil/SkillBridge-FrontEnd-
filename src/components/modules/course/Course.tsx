@@ -1,3 +1,102 @@
+// "use client";
+
+// import { ICourse } from "@/app/(CommonLayout)/page";
+// import { Badge } from "@/components/ui/badge";
+// import { Button } from "@/components/ui/button";
+// import { Card, CardContent, CardFooter } from "@/components/ui/card";
+// import { ArrowUpRight, Layers, Star, User } from "lucide-react";
+// import Link from "next/link";
+
+// export default function CourseCard({ course }: { course: ICourse }) {
+//   const categoryInitial = course.category.name.charAt(0).toUpperCase();
+
+//   return (
+//     <Card className="group relative flex flex-col h-full bg-white border border-slate-100 rounded-[2rem] overflow-hidden transition-all duration-500 hover:shadow-[0_20px_50px_rgba(79,70,229,0.1)] hover:-translate-y-2">
+//       {/* --- Top Visual Element --- */}
+//       <div className="relative h-48 w-full overflow-hidden bg-slate-50">
+//         {/* Decorative Gradient Background */}
+//         <div className="absolute inset-0 bg-linear-to-br from-violet-600/10 to-indigo-600/5 group-hover:scale-110 transition-transform duration-700" />
+
+//         {/* Category Badge - Floating */}
+//         <div className="absolute top-4 left-4 z-10">
+//           <Badge className="bg-white/80 backdrop-blur-md text-violet-700 border-none shadow-sm px-3 py-1 font-bold text-[10px] uppercase tracking-wider">
+//             {course.category.name}
+//           </Badge>
+//         </div>
+
+//         {/* Big Initial Overlay */}
+//         <div className="flex items-center justify-center h-full">
+//           <span className="text-8xl font-black text-violet-600/10 select-none group-hover:scale-125 transition-transform duration-700">
+//             {categoryInitial}
+//           </span>
+//         </div>
+//       </div>
+
+//       {/* --- Main Content --- */}
+//       <CardContent className="p-6 flex-1 flex flex-col -mt-10">
+//         {/* Tutor Avatar & Info Overlay */}
+//         <div className="flex items-center gap-3 mb-6 bg-white p-2 rounded-2xl shadow-sm w-fit pr-4 border border-slate-50">
+//           <div className="h-10 w-10 rounded-xl bg-violet-600 flex items-center justify-center text-white shadow-lg shadow-violet-200">
+//             <User className="w-5 h-5" />
+//           </div>
+//           <div className="flex flex-col">
+//             <span className="text-xs font-black text-slate-900 leading-none">
+//               {course.tutor.user.name}
+//             </span>
+//             <span className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">
+//               {course.tutor.expertise}
+//             </span>
+//           </div>
+//         </div>
+
+//         <h3 className="text-xl font-bold leading-tight text-slate-900 mb-3 group-hover:text-violet-600 transition-colors line-clamp-2">
+//           {course.title}
+//         </h3>
+
+//         <p className="text-slate-500 text-sm line-clamp-2 leading-relaxed mb-6">
+//           {course.description}
+//         </p>
+
+//         {/* Stats Row */}
+//         <div className="flex items-center gap-4 mt-auto pb-6 border-b border-slate-50">
+//           <div className="flex items-center gap-1.5">
+//             <Layers className="w-4 h-4 text-violet-500" />
+//             <span className="text-xs font-bold text-slate-600">All Levels</span>
+//           </div>
+//           <div className="flex items-center gap-1.5">
+//             <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+//             <span className="text-xs font-bold text-slate-600">4.9</span>
+//           </div>
+//         </div>
+//       </CardContent>
+
+//       {/* --- Footer Area --- */}
+//       <CardFooter className="p-6 pt-0 flex items-center justify-between gap-4">
+//         <div>
+//           <span className="block text-[10px] uppercase font-black text-slate-400 tracking-widest mb-0.5">
+//             Price
+//           </span>
+//           <span className="text-2xl font-black text-slate-900">
+//             ${course.price.toFixed(0)}
+//           </span>
+//         </div>
+
+//         <Button
+//           asChild
+//           className="rounded-2xl bg-slate-900 hover:bg-violet-600 text-white px-6 h-12 font-bold transition-all duration-300 shadow-lg hover:shadow-violet-200 group/btn"
+//         >
+//           <Link
+//             href={`/courses/${course.id}`}
+//             className="flex items-center gap-2"
+//           >
+//             Details
+//             <ArrowUpRight className="w-4 h-4 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
+//           </Link>
+//         </Button>
+//       </CardFooter>
+//     </Card>
+//   );
+// }
 "use client";
 
 import { ICourse } from "@/app/(CommonLayout)/page";
@@ -9,13 +108,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import {
-  ArrowRight,
-  BookOpenText,
-  Eye,
-  ShoppingCart,
-  User,
-} from "lucide-react";
+import { ArrowRight, ArrowUpRight, BookOpenText, User } from "lucide-react";
 import Link from "next/link";
 
 export default function CourseCard({ course }: { course: ICourse }) {
@@ -74,7 +167,7 @@ export default function CourseCard({ course }: { course: ICourse }) {
 
         {/* 🚀 Interactive Buttons Section */}
         <div className="grid grid-cols-2 gap-3 pt-2">
-          <Button
+          {/* <Button
             variant="outline"
             className="rounded-xl border-violet-200 text-violet-600 hover:bg-violet-50 hover:text-violet-700 font-bold transition-all flex items-center gap-2 group/btn"
             asChild
@@ -83,11 +176,18 @@ export default function CourseCard({ course }: { course: ICourse }) {
               <Eye className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
               View Details
             </Link>
-          </Button>
-
-          <Button className="rounded-xl bg-violet-600 text-white hover:bg-violet-700 shadow-md shadow-violet-100 font-bold transition-all flex items-center gap-2 group/btn">
-            <ShoppingCart className="w-4 h-4 group-hover/btn:animate-bounce" />
-            Book Now
+          </Button> */}
+          <Button
+            asChild
+            className="rounded-2xl bg-slate-900 hover:bg-violet-600 text-white px-6 h-12 font-bold transition-all duration-300 shadow-lg hover:shadow-violet-200 group/btn"
+          >
+            <Link
+              href={`/courses/${course.id}`}
+              className="flex items-center gap-2"
+            >
+              Details
+              <ArrowUpRight className="w-4 h-4 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
+            </Link>
           </Button>
         </div>
       </CardContent>
