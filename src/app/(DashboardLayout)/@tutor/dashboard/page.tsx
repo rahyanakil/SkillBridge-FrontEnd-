@@ -1,63 +1,123 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  ArrowUpRight,
+  getTutorBookings,
+  updateBookingStatus,
+} from "@/services/Dashboard/tutorActions";
+import Cookies from "js-cookie";
+import {
+  Check,
   DollarSign,
+  Loader2,
   MessageSquare,
   Star,
   TrendingUp,
   Users,
   Video,
+  X,
 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 export default function TutorDashboard() {
-  const stats = [
-    {
-      title: "Total Revenue",
-      value: "$4,250",
-      icon: DollarSign,
-      color: "text-emerald-600",
-      bg: "bg-emerald-50",
-    },
-    {
-      title: "Active Students",
-      value: "154",
-      icon: Users,
-      color: "text-blue-600",
-      bg: "bg-blue-50",
-    },
-    {
-      title: "Total Courses",
-      value: "06",
-      icon: Video,
-      color: "text-violet-600",
-      bg: "bg-violet-50",
-    },
-    {
-      title: "Avg. Rating",
-      value: "4.9",
-      icon: MessageSquare,
-      color: "text-amber-500",
-      bg: "bg-amber-50",
-    },
-  ];
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const initTutor = useCallback(async () => {
+    const token = Cookies.get("token");
+    if (!token) return;
+
+    try {
+      setLoading(true);
+      const res = await getTutorBookings(token);
+      if (res?.success) {
+        setBookings(Array.isArray(res.data) ? res.data : []);
+      }
+    } catch (err) {
+      toast.error("Failed to fetch tutor data");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    initTutor();
+  }, [initTutor]);
+
+  // স্ট্যাটাস হ্যান্ডলার
+  const handleStatusChange = async (id: string, status: string) => {
+    const token = Cookies.get("token");
+    const res = await updateBookingStatus(id, status, token!);
+    if (res.success) {
+      toast.success(`Booking ${status.toLowerCase()} successfully!`);
+      initTutor(); // রিফ্রেশ ডাটা
+    } else {
+      toast.error(res.message);
+    }
+  };
+
+  const stats = useMemo(
+    () => [
+      {
+        title: "Total Revenue",
+        value: "$4,250",
+        icon: DollarSign,
+        color: "text-emerald-600",
+        bg: "bg-emerald-50",
+      },
+      {
+        title: "Active Students",
+        value: bookings.length.toString(),
+        icon: Users,
+        color: "text-blue-600",
+        bg: "bg-blue-50",
+      },
+      {
+        title: "Total Courses",
+        value: "06",
+        icon: Video,
+        color: "text-violet-600",
+        bg: "bg-violet-50",
+      },
+      {
+        title: "Pending Requests",
+        value: bookings.filter((b) => b.status === "PENDING").length.toString(),
+        icon: MessageSquare,
+        color: "text-amber-500",
+        bg: "bg-amber-50",
+      },
+    ],
+    [bookings],
+  );
+
+  if (loading)
+    return (
+      <div className="h-[80vh] flex flex-col items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-emerald-600 mb-2" />
+        <p className="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">
+          Tutor Syncing...
+        </p>
+      </div>
+    );
 
   return (
     <div className="p-6 space-y-8 animate-in fade-in zoom-in-95 duration-500">
       {/* Header */}
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 italic tracking-tight">
+          <h1 className="text-4xl font-black text-slate-900 italic tracking-tight leading-none">
             Tutor <span className="text-emerald-600">Insights</span>
           </h1>
-          <p className="text-slate-500 font-medium">
+          <p className="text-slate-500 font-medium mt-2">
             Monitoring your teaching performance.
           </p>
         </div>
         <div className="hidden md:block">
-          <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border-none px-4 py-2 font-bold rounded-xl">
+          <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border-none px-6 py-2.5 font-black rounded-2xl shadow-sm italic">
             Withdraw Balance: $840.00
           </Badge>
         </div>
@@ -68,19 +128,19 @@ export default function TutorDashboard() {
         {stats.map((stat, i) => (
           <Card
             key={i}
-            className="border-none shadow-xl shadow-slate-100/50 rounded-[2rem] group hover:bg-slate-900 transition-all duration-300"
+            className="border-none shadow-xl shadow-slate-100/50 rounded-[2.5rem] group hover:bg-slate-900 transition-all duration-500 cursor-pointer"
           >
             <CardContent className="p-8">
               <div
-                className={`w-12 h-12 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center mb-6 group-hover:bg-white/10 group-hover:text-white transition-colors`}
+                className={`w-14 h-14 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center mb-6 group-hover:bg-white/10 group-hover:text-white transition-all duration-500`}
               >
-                <stat.icon className="w-6 h-6" />
+                <stat.icon className="w-7 h-7" />
               </div>
               <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
                 {stat.title}
               </h4>
               <div className="flex items-center justify-between mt-2">
-                <p className="text-3xl font-black text-slate-900 group-hover:text-white">
+                <p className="text-4xl font-black text-slate-900 group-hover:text-white transition-colors">
                   {stat.value}
                 </p>
                 <TrendingUp className="w-5 h-5 text-emerald-500" />
@@ -90,79 +150,112 @@ export default function TutorDashboard() {
         ))}
       </div>
 
-      {/* Main Grid */}
-      <div className="grid gap-6 md:grid-cols-3">
-        {/* Upcoming Classes */}
-        <Card className="md:col-span-2 rounded-[2.5rem] border-none shadow-sm bg-white p-8">
+      <div className="grid gap-8 md:grid-cols-3">
+        {/* Real-time Booking Requests */}
+        <Card className="md:col-span-2 rounded-[3rem] border-none shadow-sm bg-white p-8 overflow-hidden">
           <div className="flex justify-between items-center mb-8">
-            <h3 className="text-xl font-bold text-slate-800">
-              Next Scheduled Classes
+            <h3 className="text-xl font-black text-slate-800 tracking-tight">
+              Student Session Requests
             </h3>
-            <button className="text-sm font-bold text-violet-600 flex items-center gap-1 hover:underline">
-              View Calendar <ArrowUpRight className="w-4 h-4" />
-            </button>
+            <Badge className="bg-slate-100 text-slate-600 rounded-lg font-bold">
+              Latest {bookings.length}
+            </Badge>
           </div>
 
           <div className="space-y-4">
-            {[1, 2].map((i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between p-5 bg-slate-50 rounded-[2rem] border border-transparent hover:border-violet-100 transition-all group"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex flex-col items-center justify-center leading-none">
-                    <span className="text-[10px] font-black text-slate-400 uppercase">
-                      Feb
-                    </span>
-                    <span className="text-lg font-black text-slate-800">
-                      {27 + i}
-                    </span>
+            {bookings.length > 0 ? (
+              bookings.map((booking) => (
+                <div
+                  key={booking._id}
+                  className="flex items-center justify-between p-6 bg-slate-50 rounded-[2rem] border border-transparent hover:border-emerald-100 hover:bg-white hover:shadow-lg transition-all group"
+                >
+                  <div className="flex items-center gap-5">
+                    <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-xl font-bold">
+                      {booking.student?.name?.[0] || "S"}
+                    </div>
+                    <div>
+                      <h4 className="font-black text-slate-800">
+                        {booking.student?.name || "Anonymous Student"}
+                      </h4>
+                      <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1 opacity-60">
+                        Status:{" "}
+                        <span
+                          className={
+                            booking.status === "ACCEPTED"
+                              ? "text-emerald-600"
+                              : "text-amber-500"
+                          }
+                        >
+                          {booking.status}
+                        </span>
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-bold text-slate-800 group-hover:text-violet-600 transition-colors">
-                      Mastering TypeScript Advanced Types
-                    </h4>
-                    <p className="text-xs text-slate-500 mt-1 font-medium">
-                      10:00 AM - 12:00 PM • 42 Students
-                    </p>
-                  </div>
+
+                  {booking.status === "PENDING" ? (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() =>
+                          handleStatusChange(booking._id, "ACCEPTED")
+                        }
+                        className="h-12 w-12 bg-emerald-500 text-white rounded-2xl flex items-center justify-center hover:scale-110 transition-transform"
+                      >
+                        <Check className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleStatusChange(booking._id, "REJECTED")
+                        }
+                        className="h-12 w-12 bg-rose-500 text-white rounded-2xl flex items-center justify-center hover:scale-110 transition-transform"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button className="h-10 w-10 bg-white rounded-xl flex items-center justify-center shadow-sm hover:bg-slate-900 hover:text-white transition-all">
+                      <Video className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
-                <button className="h-10 w-10 bg-white rounded-xl flex items-center justify-center shadow-sm hover:bg-slate-900 hover:text-white transition-all">
-                  <Video className="w-4 h-4" />
-                </button>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-center py-20 font-bold text-slate-300 italic uppercase tracking-widest">
+                No active requests found
+              </p>
+            )}
           </div>
         </Card>
 
-        {/* Student Feedback Summary */}
-        <Card className="rounded-[2.5rem] border-none bg-emerald-600 p-8 text-white relative overflow-hidden">
+        {/* Feedback Summary */}
+        <Card className="rounded-[3rem] border-none bg-emerald-600 p-10 text-white relative overflow-hidden group shadow-2xl shadow-emerald-200">
           <div className="relative z-10">
-            <h3 className="text-xl font-bold mb-4">Student Feedback</h3>
-            <div className="flex items-center gap-2 mb-6">
-              <span className="text-5xl font-black">4.9</span>
-              <div className="flex flex-col">
+            <h3 className="text-xl font-black mb-6 tracking-widest uppercase text-emerald-100">
+              Performance
+            </h3>
+            <div className="flex items-center gap-4 mb-8">
+              <span className="text-7xl font-black tracking-tighter italic">
+                4.9
+              </span>
+              <div className="space-y-1">
                 <div className="flex text-amber-300">
-                  <Star className="w-3 h-3 fill-current" />
-                  <Star className="w-3 h-3 fill-current" />
-                  <Star className="w-3 h-3 fill-current" />
-                  <Star className="w-3 h-3 fill-current" />
-                  <Star className="w-3 h-3 fill-current" />
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-current" />
+                  ))}
                 </div>
-                <span className="text-[10px] font-bold opacity-80 uppercase tracking-tighter">
-                  Based on 120 reviews
+                <span className="text-[10px] font-black opacity-70 uppercase tracking-widest block">
+                  Top 1% Mentor
                 </span>
               </div>
             </div>
-            <p className="text-sm opacity-90 italic leading-relaxed">
-              Great teaching style! The concepts were explained very clearly
-              with real-world examples.
+            <p className="text-sm font-medium italic leading-relaxed opacity-90">
+              &ldquo;The best explanation of TypeScript generics I&apos;ve ever
+              seen. Highly recommended!&quot;
             </p>
-            <button className="mt-8 w-full bg-white/10 hover:bg-white/20 border border-white/20 py-3 rounded-2xl text-xs font-bold transition-all">
-              Read All Reviews
+            <button className="mt-10 w-full bg-slate-900 text-white py-5 rounded-[1.5rem] text-xs font-black uppercase tracking-widest hover:bg-white hover:text-emerald-600 transition-all shadow-xl">
+              Reviews History
             </button>
           </div>
-          <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute -right-16 -bottom-16 w-60 h-60 bg-white/10 rounded-full blur-[80px]" />
         </Card>
       </div>
     </div>
