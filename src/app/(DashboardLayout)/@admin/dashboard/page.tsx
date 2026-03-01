@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -72,7 +73,7 @@ export default function SeniorAdminDashboard() {
   );
 
   return (
-    <div className="p-8 space-y-10 max-w-[1500px] mx-auto bg-[#f8fafc] min-h-screen">
+    <div className="p-8 space-y-10 max-w-375 mx-auto bg-[#f8fafc] min-h-screen">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>

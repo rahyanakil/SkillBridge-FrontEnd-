@@ -4,6 +4,8 @@ import { HeroCarousel } from "@/components/modules/home/Hero";
 import { ReviewSection } from "@/components/modules/home/ReviewSection";
 import { getAllCourse } from "@/services/course";
 import { getAllReviews } from "@/services/reviews/reviewActions";
+import AboutUs from "./about-us/page";
+// import About from "./about-us/page.tsx";
 
 // Interface updated to include all properties
 export interface ICourse {
@@ -41,6 +43,7 @@ export default async function Home() {
         </div>
       </div>
       <CategorySection />
+      <AboutUs />
       <ReviewSection reviews={reviews} />
     </div>
   );
