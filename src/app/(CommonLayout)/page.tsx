@@ -1,6 +1,9 @@
 import CourseCard from "@/components/modules/course/Course";
+import CategorySection from "@/components/modules/home/CategorySection";
 import { HeroCarousel } from "@/components/modules/home/Hero";
+import { ReviewSection } from "@/components/modules/home/ReviewSection";
 import { getAllCourse } from "@/services/course";
+import { getAllReviews } from "@/services/reviews/reviewActions";
 
 // Interface updated to include all properties
 export interface ICourse {
@@ -21,6 +24,11 @@ export interface ICourse {
 
 export default async function Home() {
   const { data } = await getAllCourse();
+  // এপিআই থেকে রিভিউ ডাটা নিয়ে আসা
+  const reviewsData = await getAllReviews();
+
+  // ডাটা যদি কোনো অবজেক্টের ভেতর থাকে (যেমন: { success: true, data: [...] })
+  const reviews = reviewsData?.data || reviewsData || [];
 
   return (
     <div className="min-h-screen bg-gray-50/50">
@@ -32,6 +40,8 @@ export default async function Home() {
           ))}
         </div>
       </div>
+      <CategorySection />
+      <ReviewSection reviews={reviews} />
     </div>
   );
 }

@@ -32,7 +32,7 @@ interface User {
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/courses", label: "Our Courses" },
-  { href: "/tutors", label: "Tutors" },
+  { href: "/category", label: "Category" },
 ];
 
 export default function Navbar() {
