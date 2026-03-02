@@ -2,6 +2,7 @@ import CourseCard from "@/components/modules/course/Course";
 import CategorySection from "@/components/modules/home/CategorySection";
 import { HeroCarousel } from "@/components/modules/home/Hero";
 import { ReviewSection } from "@/components/modules/home/ReviewSection";
+import TutorSection from "@/components/modules/tutor/TutorSection";
 import { getAllCourse } from "@/services/course";
 import { getAllReviews } from "@/services/reviews/reviewActions";
 import AboutUs from "./about-us/page";
@@ -43,6 +44,7 @@ export default async function Home() {
         </div>
       </div>
       <CategorySection />
+      <TutorSection />
       <AboutUs />
       <ReviewSection reviews={reviews} />
     </div>
