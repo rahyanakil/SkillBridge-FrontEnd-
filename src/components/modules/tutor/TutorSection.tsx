@@ -4,13 +4,7 @@
 
 import { getAllPublicTutors } from "@/services/tutor/tutor";
 // import { getAllPublicTutors } from "@/services/Landing/tutorActions";
-import {
-  ArrowUpRight,
-  BookOpen,
-  GraduationCap,
-  Loader2,
-  ShieldCheck,
-} from "lucide-react";
+import { BookOpen, GraduationCap, Loader2, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -130,9 +124,7 @@ export default function TutorSection() {
                   <Link
                     href={`/tutors/${tutor.userId}`}
                     className="btn btn-circle btn-primary btn-sm hover:scale-110 transition-transform"
-                  >
-                    <ArrowUpRight className="w-4 h-4" />
-                  </Link>
+                  ></Link>
                 </div>
               </div>
             ))

@@ -1,19 +1,12 @@
+// import { AppSidebar } from "@/components/app-sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { getUser } from "@/services/auth";
+import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({
   admin,
@@ -26,51 +19,31 @@ export default async function DashboardLayout({
 }) {
   const user = await getUser();
 
-  // 🛡️ Guard Clause: ইউজার না থাকলে কিছুই রেন্ডার হবে না (এরর প্রতিরোধ করবে)
-  if (!user || !user.role) {
-    return null;
+  // ইউজার না থাকলে লগইনে পাঠিয়ে দেওয়া ভালো
+  if (!user) {
+    redirect("/login");
   }
+
+  // TypeScript কে নিশ্চিত করা যে role আছেই
+  const role = user.role as "ADMIN" | "STUDENT" | "TUTOR";
 
   return (
     <SidebarProvider>
-      {/* ইউজার রোল অনুযায়ী সাইডবার */}
-      <AppSidebar userRole={user.role} />
-
+      <AppSidebar userRole={role} />
       <SidebarInset>
-        {/* হেডার এবং নেভিগেশন এরিয়া */}
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>
-                    {user.role.charAt(0) + user.role.slice(1).toLowerCase()}{" "}
-                    Portal
-                  </BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+          <SidebarTrigger />
+          <div className="h-4 w-px bg-border mx-2" />
+          <h1 className="text-sm font-bold uppercase tracking-widest opacity-50">
+            {role} Portal
+          </h1>
         </header>
 
-        {/* মেইন কন্টেন্ট এরিয়া */}
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min">
-            {/* রোল অনুযায়ী আলাদা আলাদা ভিউ (Parallel Routes) */}
-            {user.role === "ADMIN" && admin}
-            {user.role === "TUTOR" && tutor}
-            {user.role === "STUDENT" && student}
-          </div>
-        </div>
+        <main className="flex-1 p-6">
+          {role === "ADMIN" && admin}
+          {role === "TUTOR" && tutor}
+          {role === "STUDENT" && student}
+        </main>
       </SidebarInset>
     </SidebarProvider>
   );
