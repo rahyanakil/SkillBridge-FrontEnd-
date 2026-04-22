@@ -11,12 +11,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { getUser, UserLogOut } from "@/services/auth";
+import NotificationBell from "@/components/shared/NotificationBell";
 import {
   BookOpen,
   ChevronDown,
   LayoutDashboard,
   LogOut,
   Menu,
+  Settings,
   User as UserIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -94,7 +96,10 @@ export default function Navbar() {
 
           {/* Conditional Auth UI */}
           {user ? (
-            <UserMenu user={user} onLogout={handleLogout} />
+            <div className="flex items-center gap-3">
+              <NotificationBell />
+              <UserMenu user={user} onLogout={handleLogout} />
+            </div>
           ) : (
             <div className="flex items-center gap-3">
               <Link href="/login">
@@ -236,6 +241,18 @@ function UserMenu({ user, onLogout }: { user: User; onLogout: () => void }) {
                 <UserIcon className="w-4 h-4 text-violet-600" />
               </div>
               <span className="font-bold">My Profile</span>
+            </Link>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem asChild>
+            <Link
+              href="/profile/edit"
+              className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-violet-50 text-gray-700 transition-all group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center group-hover:bg-white shadow-sm transition-colors">
+                <Settings className="w-4 h-4 text-violet-600" />
+              </div>
+              <span className="font-bold">Edit Profile</span>
             </Link>
           </DropdownMenuItem>
 

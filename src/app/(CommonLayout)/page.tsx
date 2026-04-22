@@ -5,16 +5,16 @@ import { ReviewSection } from "@/components/modules/home/ReviewSection";
 import TutorSection from "@/components/modules/tutor/TutorSection";
 import { getAllCourse } from "@/services/course";
 import { getAllReviews } from "@/services/reviews/reviewActions";
-import AboutUs from "./about-us/page";
-// import About from "./about-us/page.tsx";
 
-// Interface updated to include all properties
 export interface ICourse {
   id: string;
   title: string;
   description: string;
   price: number;
+  avgRating?: number;
+  reviewCount?: number;
   tutor: {
+    userId?: string;
     user: {
       name: string;
     };
@@ -26,12 +26,8 @@ export interface ICourse {
 }
 
 export default async function Home() {
-  const { data } = await getAllCourse();
-  // এপিআই থেকে রিভিউ ডাটা নিয়ে আসা
-  const reviewsData = await getAllReviews();
-
-  // ডাটা যদি কোনো অবজেক্টের ভেতর থাকে (যেমন: { success: true, data: [...] })
-  const reviews = reviewsData?.data || reviewsData || [];
+  const [{ data }, reviewsData] = await Promise.all([getAllCourse(), getAllReviews()]);
+  const reviews = Array.isArray(reviewsData) ? reviewsData : [];
 
   return (
     <div className="min-h-screen bg-gray-50/50">
@@ -45,7 +41,6 @@ export default async function Home() {
       </div>
       <CategorySection />
       <TutorSection />
-      <AboutUs />
       <ReviewSection reviews={reviews} />
     </div>
   );

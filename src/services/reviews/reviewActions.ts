@@ -1,26 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
+import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
-// ১. সকল রিভিউ ফেচ করার জন্য (হোম পেজের জন্য)
 export const getAllReviews = async () => {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
-
-    // ১. চেক করুন ইউআরএলটি ঠিকমতো পাচ্ছে কি না
-    console.log("Fetching from:", `${baseUrl}/reviews/`);
-
-    const res = await fetch(`${baseUrl}/reviews`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/reviews`, {
       method: "GET",
-      cache: "no-store", // ক্যাশ অফ করে চেক করুন
+      next: { revalidate: 300 },
     });
 
-    // ২. যদি রেসপন্স OK না হয়, তবে স্ট্যাটাস কোড প্রিন্ট করুন
     if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      console.error(`API Error: ${res.status}`, errorData);
-      return []; // এরর থ্রো না করে খালি অ্যারে রিটার্ন করুন যাতে পেজ ক্রাশ না করে
+      return [];
     }
 
     const result = await res.json();
@@ -31,19 +22,24 @@ export const getAllReviews = async () => {
   }
 };
 
-// ২. নতুন রিভিউ তৈরি করার জন্য (স্টুডেন্ট ড্যাশবোর্ড থেকে)
 export const createReview = async (reviewData: {
   bookingId: string;
   rating: number;
   comment: string;
-  token: string; // ক্লায়েন্ট থেকে টোকেন পাস করতে হবে
 }) => {
   try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token")?.value;
+
+    if (!token) {
+      return { success: false, message: "Please login to submit a review." };
+    }
+
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/reviews`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: reviewData.token,
+        Authorization: token,
       },
       body: JSON.stringify({
         bookingId: reviewData.bookingId,
@@ -55,7 +51,6 @@ export const createReview = async (reviewData: {
     const result = await res.json();
 
     if (res.ok) {
-      // রিভিউ অ্যাড হওয়ার পর হোম পেজ রিভ্যালিডেট করা যাতে নতুন রিভিউ দেখা যায়
       revalidatePath("/");
       return { success: true, data: result.data };
     } else {

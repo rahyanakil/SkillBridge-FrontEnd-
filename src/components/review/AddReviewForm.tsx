@@ -1,16 +1,15 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { createReview } from "@/services/reviews/reviewActions";
 import { Loader2, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-export const AddReviewForm = ({ bookingId, onReviewAdded }: any) => {
+export const AddReviewForm = ({ bookingId, onReviewAdded }: { bookingId: string; onReviewAdded?: (review: any) => void }) => {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const router = useRouter();
@@ -25,35 +24,22 @@ export const AddReviewForm = ({ bookingId, onReviewAdded }: any) => {
   const onSubmit = async (data: any) => {
     if (rating === 0) return toast.error("Please select a rating!");
 
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/reviews`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ bookingId, rating, comment: data.comment }),
-      });
+    const result = await createReview({
+      bookingId,
+      rating,
+      comment: data.comment,
+    });
 
-      const result = await res.json();
-
-      if (result.success) {
-        toast.success("Review added successfully!");
-        reset();
-        setRating(0);
-
-        // যদি ডাটা ইনস্ট্যান্টলি আপডেট করার ফাংশন থাকে
-        if (onReviewAdded) {
-          onReviewAdded(result.data);
-        }
-
-        // পেজ রিফ্রেশ করে নতুন ডাটা দেখানোর জন্য
-        router.refresh();
-      } else {
-        toast.error(result.message || "Failed to add review");
+    if (result.success) {
+      toast.success("Review added successfully!");
+      reset();
+      setRating(0);
+      if (onReviewAdded) {
+        onReviewAdded(result.data);
       }
-    } catch (error) {
-      toast.error("Something went wrong!");
+      router.refresh();
+    } else {
+      toast.error(result.message || "Failed to add review");
     }
   };
 

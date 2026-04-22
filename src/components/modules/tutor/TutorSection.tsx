@@ -1,43 +1,13 @@
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-
 import { getAllPublicTutors } from "@/services/tutor/tutor";
-// import { getAllPublicTutors } from "@/services/Landing/tutorActions";
-import { BookOpen, GraduationCap, Loader2, ShieldCheck } from "lucide-react";
+import { BookOpen, GraduationCap, ShieldCheck } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
 
-export default function TutorSection() {
-  const [tutors, setTutors] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+const BACKEND_URL = process.env.NEXT_PUBLIC_BASE_URL?.replace("/api/v1", "") ?? "";
 
-  const fetchTutors = useCallback(async () => {
-    try {
-      setLoading(true);
-      const result = await getAllPublicTutors();
-      if (result.success) {
-        // ব্যাকএন্ডের 'data' অ্যারে থেকে টিউটরদের নিচ্ছি
-        setTutors(result.data);
-      }
-    } catch (error) {
-      console.error("Error fetching tutors:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchTutors();
-  }, [fetchTutors]);
-
-  if (loading) {
-    return (
-      <div className="py-20 flex justify-center items-center">
-        <Loader2 className="animate-spin text-primary w-10 h-10" />
-      </div>
-    );
-  }
+export default async function TutorSection() {
+  const result = await getAllPublicTutors();
+  const tutors: any[] = result.success ? result.data : [];
 
   return (
     <section className="py-24 bg-base-100">
@@ -51,24 +21,26 @@ export default function TutorSection() {
           </p>
         </div>
 
-        {/* টিউটর গ্রিড - এখানে ম্যাপ করা হয়েছে */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {tutors && tutors.length > 0 ? (
+          {tutors.length > 0 ? (
             tutors.map((tutor) => (
               <div
                 key={tutor.id}
                 className="group relative bg-white border border-base-200 rounded-[3rem] p-8 transition-all hover:shadow-2xl hover:-translate-y-2"
               >
-                {/* প্রোফাইল হেডার */}
                 <div className="flex items-start justify-between mb-8">
                   <div className="relative">
                     <div className="w-24 h-24 rounded-[2.5rem] overflow-hidden ring-4 ring-base-100 shadow-xl">
-                      <img
+                      <Image
                         src={
-                          tutor.user?.avatar ||
-                          `https://api.dicebear.com/7.x/avataaars/svg?seed=${tutor.user?.name}`
+                          tutor.user?.avatar
+                            ? `${BACKEND_URL}${tutor.user.avatar}`
+                            : `https://api.dicebear.com/7.x/avataaars/svg?seed=${tutor.user?.name}`
                         }
-                        alt={tutor.user?.name}
+                        alt={tutor.user?.name ?? "Tutor"}
+                        width={96}
+                        height={96}
+                        unoptimized
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -87,7 +59,6 @@ export default function TutorSection() {
                   </div>
                 </div>
 
-                {/* টিউটর ইনফো */}
                 <div className="mb-6">
                   <h3 className="text-2xl font-black tracking-tight group-hover:text-primary transition-colors">
                     {tutor.user?.name}
@@ -100,7 +71,6 @@ export default function TutorSection() {
                   </p>
                 </div>
 
-                {/* কোর্সের লিস্ট (আপনার JSON অনুযায়ী) */}
                 <div className="bg-base-200/50 rounded-2xl p-4 mb-6">
                   <p className="text-[10px] font-black opacity-40 uppercase tracking-widest mb-2 flex items-center gap-2">
                     <BookOpen className="w-3 h-3" /> Active Courses (
@@ -115,22 +85,21 @@ export default function TutorSection() {
                   </div>
                 </div>
 
-                {/* কার্ড ফুটার */}
                 <div className="flex items-center justify-between pt-6 border-t border-base-100">
                   <div className="flex items-center gap-2 font-black text-[11px] opacity-40 uppercase">
                     <GraduationCap className="w-4 h-4" /> {tutor.experience} Yrs
                     Exp
                   </div>
                   <Link
-                    href={`/tutors/${tutor.userId}`}
+                    href={`/tutor/${tutor.userId}`}
                     className="btn btn-circle btn-primary btn-sm hover:scale-110 transition-transform"
-                  ></Link>
+                  />
                 </div>
               </div>
             ))
           ) : (
             <div className="col-span-full text-center py-20 bg-base-200 rounded-[3rem]">
-              <p className="text-xl font-black opacity-20  italic tracking-tighter">
+              <p className="text-xl font-black opacity-20 italic tracking-tighter">
                 The Faculty is currently empty.
               </p>
             </div>

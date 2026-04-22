@@ -2,6 +2,7 @@
 
 import Autoplay from "embla-carousel-autoplay";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import {
   Carousel,
@@ -35,6 +36,7 @@ const slides = [
 ];
 
 export function HeroCarousel() {
+  const router = useRouter();
   return (
     <div className="w-full  mx-auto py-6 px-4">
       <Carousel
@@ -64,7 +66,10 @@ export function HeroCarousel() {
                   <p className="text-xl opacity-90 font-light max-lg drop-shadow">
                     {slide.subtitle}
                   </p>
-                  <button className="mt-6 px-6 py-3  bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-semibold transition-all">
+                  <button
+                    onClick={() => router.push("/courses")}
+                    className="mt-6 px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-semibold transition-all"
+                  >
                     Get Started
                   </button>
                 </div>
