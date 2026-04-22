@@ -35,7 +35,7 @@ export default async function TutorProfilePage({ params }: { params: Promise<{ t
           <div className="flex flex-col md:flex-row gap-6 items-start">
             <div className="w-28 h-28 rounded-3xl bg-white shadow-xl flex items-center justify-center text-4xl font-black text-violet-600 border-4 border-white">
               {tutor.user?.avatar ? (
-                <img src={`${process.env.NEXT_PUBLIC_BASE_URL?.replace("/api/v1", "")}${tutor.user.avatar}`} alt={tutor.user.name} className="w-full h-full object-cover rounded-3xl" />
+                <img src={tutor.user.avatar.startsWith("http") ? tutor.user.avatar : `${process.env.NEXT_PUBLIC_BASE_URL?.replace("/api/v1", "")}${tutor.user.avatar}`} alt={tutor.user.name} className="w-full h-full object-cover rounded-3xl" />
               ) : (
                 tutor.user?.name?.[0]?.toUpperCase()
               )}

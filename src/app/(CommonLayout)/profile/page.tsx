@@ -105,7 +105,7 @@ const ProfilePage = async () => {
                   <div className="w-32 h-32 rounded-[2rem] bg-linear-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-4xl font-black text-white shadow-xl shadow-violet-200 overflow-hidden">
                     {user.avatar ? (
                       <img
-                        src={`${process.env.NEXT_PUBLIC_BASE_URL?.replace("/api/v1", "")}${user.avatar}`}
+                        src={user.avatar.startsWith("http") ? user.avatar : `${process.env.NEXT_PUBLIC_BASE_URL?.replace("/api/v1", "")}${user.avatar}`}
                         alt={user.name}
                         className="w-full h-full object-cover"
                       />

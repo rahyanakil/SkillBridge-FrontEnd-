@@ -1,15 +1,26 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { changePassword, updateProfile, uploadAvatar } from "@/services/profile";
-import { getProfile } from "@/services/profile";
+import {
+  changePassword,
+  getProfile,
+  updateProfile,
+  uploadAvatar,
+} from "@/services/profile";
 import { Camera, KeyRound, Loader2, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL?.replace("/api/v1", "") ?? "";
+const toAvatarUrl = (avatar: string | null) =>
+  !avatar
+    ? null
+    : avatar.startsWith("http")
+      ? avatar
+      : `${process.env.NEXT_PUBLIC_BASE_URL?.replace("/api/v1", "") ?? ""}${avatar}`;
 
 export default function ProfileEditPage() {
   const [currentAvatar, setCurrentAvatar] = useState<string | null>(null);
@@ -18,14 +29,18 @@ export default function ProfileEditPage() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const profileForm = useForm<{ name: string; email: string }>();
-  const passwordForm = useForm<{ oldPassword: string; newPassword: string; confirm: string }>();
+  const passwordForm = useForm<{
+    oldPassword: string;
+    newPassword: string;
+    confirm: string;
+  }>();
 
   useEffect(() => {
     getProfile().then((user) => {
       if (user) {
         profileForm.setValue("name", user.name);
         profileForm.setValue("email", user.email);
-        if (user.avatar) setCurrentAvatar(`${BASE_URL}${user.avatar}`);
+        if (user.avatar) setCurrentAvatar(toAvatarUrl(user.avatar));
       }
     });
   }, []);
@@ -36,18 +51,30 @@ export default function ProfileEditPage() {
     else toast.error(result?.message || "Update failed");
   };
 
-  const handlePasswordSubmit = async (data: { oldPassword: string; newPassword: string; confirm: string }) => {
-    if (data.newPassword !== data.confirm) return toast.error("Passwords do not match");
-    if (data.newPassword.length < 6) return toast.error("Password must be at least 6 characters");
-    const result = await changePassword({ oldPassword: data.oldPassword, newPassword: data.newPassword });
-    if (result?.success) { toast.success("Password changed!"); passwordForm.reset(); }
-    else toast.error(result?.message || "Password change failed");
+  const handlePasswordSubmit = async (data: {
+    oldPassword: string;
+    newPassword: string;
+    confirm: string;
+  }) => {
+    if (data.newPassword !== data.confirm)
+      return toast.error("Passwords do not match");
+    if (data.newPassword.length < 6)
+      return toast.error("Password must be at least 6 characters");
+    const result = await changePassword({
+      oldPassword: data.oldPassword,
+      newPassword: data.newPassword,
+    });
+    if (result?.success) {
+      toast.success("Password changed!");
+      passwordForm.reset();
+    } else toast.error(result?.message || "Password change failed");
   };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) return toast.error("Image must be under 2MB");
+    if (file.size > 2 * 1024 * 1024)
+      return toast.error("Image must be under 2MB");
     setAvatarPreview(URL.createObjectURL(file));
   };
 
@@ -61,7 +88,7 @@ export default function ProfileEditPage() {
     setUploading(false);
     if (result?.success) {
       toast.success("Avatar updated!");
-      const newUrl = `${BASE_URL}${result.data?.avatar}`;
+      const newUrl = toAvatarUrl(result.data?.avatar);
       setCurrentAvatar(newUrl);
       setAvatarPreview(null);
       if (fileRef.current) fileRef.current.value = "";
@@ -84,9 +111,13 @@ export default function ProfileEditPage() {
           <Camera className="w-5 h-5 text-violet-500" /> Profile Photo
         </h2>
         <div className="flex items-center gap-6">
-          <div className="w-24 h-24 rounded-2xl bg-violet-100 overflow-hidden flex items-center justify-center text-2xl font-black text-violet-600 flex-shrink-0 border-2 border-violet-100">
+          <div className="w-24 h-24 rounded-2xl bg-violet-100 overflow-hidden flex items-center justify-center text-2xl font-black text-violet-600 shrink-0 border-2 border-violet-100">
             {displayedAvatar ? (
-              <img src={displayedAvatar} alt="avatar" className="w-full h-full object-cover" />
+              <img
+                src={displayedAvatar}
+                alt="avatar"
+                className="w-full h-full object-cover"
+              />
             ) : (
               <User className="w-8 h-8" />
             )}
@@ -114,7 +145,11 @@ export default function ProfileEditPage() {
                 className="rounded-xl bg-violet-600 hover:bg-violet-700 w-full"
                 onClick={handleAvatarUpload}
               >
-                {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Upload Avatar"}
+                {uploading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  "Upload Avatar"
+                )}
               </Button>
             )}
           </div>
@@ -130,18 +165,35 @@ export default function ProfileEditPage() {
           <User className="w-5 h-5 text-violet-500" /> Basic Info
         </h2>
         <div>
-          <label className="text-xs font-black uppercase tracking-widest text-slate-500 mb-1 block">Name</label>
-          <Input {...profileForm.register("name", { required: true })} placeholder="Your full name" className="rounded-xl" />
+          <label className="text-xs font-black uppercase tracking-widest text-slate-500 mb-1 block">
+            Name
+          </label>
+          <Input
+            {...profileForm.register("name", { required: true })}
+            placeholder="Your full name"
+            className="rounded-xl"
+          />
         </div>
         <div>
-          <label className="text-xs font-black uppercase tracking-widest text-slate-500 mb-1 block">Email</label>
-          <Input {...profileForm.register("email", { required: true })} type="email" placeholder="your@email.com" className="rounded-xl" />
+          <label className="text-xs font-black uppercase tracking-widest text-slate-500 mb-1 block">
+            Email
+          </label>
+          <Input
+            {...profileForm.register("email", { required: true })}
+            type="email"
+            placeholder="your@email.com"
+            className="rounded-xl"
+          />
         </div>
         <Button
           disabled={profileForm.formState.isSubmitting}
           className="w-full rounded-xl bg-violet-600 hover:bg-violet-700 h-12 font-black"
         >
-          {profileForm.formState.isSubmitting ? <Loader2 className="animate-spin" /> : "Save Changes"}
+          {profileForm.formState.isSubmitting ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            "Save Changes"
+          )}
         </Button>
       </form>
 
@@ -154,22 +206,47 @@ export default function ProfileEditPage() {
           <KeyRound className="w-5 h-5 text-violet-500" /> Change Password
         </h2>
         <div>
-          <label className="text-xs font-black uppercase tracking-widest text-slate-500 mb-1 block">Current Password</label>
-          <Input {...passwordForm.register("oldPassword", { required: true })} type="password" placeholder="••••••••" className="rounded-xl" />
+          <label className="text-xs font-black uppercase tracking-widest text-slate-500 mb-1 block">
+            Current Password
+          </label>
+          <Input
+            {...passwordForm.register("oldPassword", { required: true })}
+            type="password"
+            placeholder="••••••••"
+            className="rounded-xl"
+          />
         </div>
         <div>
-          <label className="text-xs font-black uppercase tracking-widest text-slate-500 mb-1 block">New Password</label>
-          <Input {...passwordForm.register("newPassword", { required: true })} type="password" placeholder="••••••••" className="rounded-xl" />
+          <label className="text-xs font-black uppercase tracking-widest text-slate-500 mb-1 block">
+            New Password
+          </label>
+          <Input
+            {...passwordForm.register("newPassword", { required: true })}
+            type="password"
+            placeholder="••••••••"
+            className="rounded-xl"
+          />
         </div>
         <div>
-          <label className="text-xs font-black uppercase tracking-widest text-slate-500 mb-1 block">Confirm Password</label>
-          <Input {...passwordForm.register("confirm", { required: true })} type="password" placeholder="••••••••" className="rounded-xl" />
+          <label className="text-xs font-black uppercase tracking-widest text-slate-500 mb-1 block">
+            Confirm Password
+          </label>
+          <Input
+            {...passwordForm.register("confirm", { required: true })}
+            type="password"
+            placeholder="••••••••"
+            className="rounded-xl"
+          />
         </div>
         <Button
           disabled={passwordForm.formState.isSubmitting}
           className="w-full rounded-xl bg-slate-900 hover:bg-slate-800 h-12 font-black"
         >
-          {passwordForm.formState.isSubmitting ? <Loader2 className="animate-spin" /> : "Update Password"}
+          {passwordForm.formState.isSubmitting ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            "Update Password"
+          )}
         </Button>
       </form>
     </div>

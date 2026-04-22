@@ -34,7 +34,7 @@ export default async function TutorSection() {
                       <Image
                         src={
                           tutor.user?.avatar
-                            ? `${BACKEND_URL}${tutor.user.avatar}`
+                            ? tutor.user.avatar.startsWith("http") ? tutor.user.avatar : `${BACKEND_URL}${tutor.user.avatar}`
                             : `https://api.dicebear.com/7.x/avataaars/svg?seed=${tutor.user?.name}`
                         }
                         alt={tutor.user?.name ?? "Tutor"}
