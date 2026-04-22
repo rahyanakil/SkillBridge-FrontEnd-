@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import type { ReactElement } from "react";
 import { getProfile } from "@/services/profile";
 import { getStudentBookings, getCompletedCourses } from "@/services/Dashboard/studentActions";
 import { getAdminStats } from "@/services/Dashboard/adminActions";
@@ -36,7 +37,7 @@ const ProfilePage = async () => {
   });
 
   let activityTitle = "Activity";
-  let stats: { label: string; count: string; icon: JSX.Element; bg: string }[] = [];
+  let stats: { label: string; count: string; icon: ReactElement; bg: string }[] = [];
   let tutorProfile: { bio?: string; expertise?: string; hourlyRate?: number; experience?: number } | null = null;
 
   if (user.role === "STUDENT") {
