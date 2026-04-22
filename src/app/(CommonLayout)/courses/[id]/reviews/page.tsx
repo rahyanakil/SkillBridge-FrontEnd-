@@ -36,7 +36,7 @@ export default async function CourseReviewsPage({ params }: { params: Promise<{ 
 
   return (
     <div className="container mx-auto py-12 px-4 max-w-4xl">
-      <Link href={`/courses/${params.id}`} className="text-violet-600 font-bold text-sm mb-6 inline-block hover:underline">
+      <Link href={`/courses/${id}`} className="text-violet-600 font-bold text-sm mb-6 inline-block hover:underline">
         ← Back to Course
       </Link>
 
