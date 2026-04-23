@@ -13,7 +13,7 @@ export default async function TutorDashboardPage() {
     <TutorDashboard
       initialBookings={Array.isArray(bookRes?.data) ? bookRes.data : []}
       initialEarnings={earnRes?.data || null}
-      initialCategories={Array.isArray(catRes?.data) ? catRes.data : []}
+      initialCategories={Array.isArray(catRes) ? catRes : []}
     />
   );
 }

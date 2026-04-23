@@ -39,8 +39,15 @@ const navItems = [
 
 export default function Navbar() {
   const [user, setUser] = useState<User | null>(null);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const isActive = (path: string) =>
     pathname === path ? "text-violet-600 font-bold" : "text-muted-foreground";
@@ -67,7 +74,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="w-full border-b sticky top-0 z-50 backdrop-blur-md bg-white/80 transition-all">
+    <nav className={`w-full sticky top-0 z-50 transition-all duration-300 ${scrolled ? "border-b border-slate-100/80 bg-white/90 backdrop-blur-xl shadow-sm shadow-slate-100" : "border-b border-transparent bg-white/60 backdrop-blur-md"}`}>
       <div className="container mx-auto flex items-center justify-between py-4 px-4 md:px-6">
         {/* Logo */}
         <Link

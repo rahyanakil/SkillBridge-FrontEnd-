@@ -1,32 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Field, FieldGroup } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { registerUser } from "@/services/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { motion } from "framer-motion";
 import {
+  ArrowRight,
+  BookOpen,
   GraduationCap,
   Loader2,
   Lock,
   Mail,
   Presentation,
+  Shield,
+  Sparkles,
   User,
-  UserPlus,
+  Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+
+import { registerUser } from "@/services/auth";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -37,8 +34,16 @@ const formSchema = z.object({
 
 type RegisterFormValues = z.infer<typeof formSchema>;
 
+const perks = [
+  { icon: BookOpen, text: "Access 100+ professional courses" },
+  { icon: Zap, text: "Live 1-on-1 sessions with experts" },
+  { icon: Shield, text: "Verified tutor profiles & safe payments" },
+];
+
 export const RegisterForm = () => {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { name: "", email: "", password: "", role: "STUDENT" },
@@ -48,7 +53,6 @@ export const RegisterForm = () => {
 
   const onSubmit = async (values: RegisterFormValues) => {
     try {
-      // টিউটর হলে ডিফল্ট কিছু প্রোফাইল ডাটা পাঠানো (যাতে ল্যান্ডিং পেজে দেখা যায়)
       const res = await registerUser(values);
       if (res.success) {
         toast.success("Account created! Please login.");
@@ -62,141 +66,273 @@ export const RegisterForm = () => {
   };
 
   return (
-    <div className="w-full flex items-center justify-center p-4 py-10">
-      <Card className="w-full max-w-md border-none shadow-2xl rounded-[3rem] bg-white/90 backdrop-blur-xl overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-2 bg-linear-to-r from-indigo-600 to-fuchsia-600" />
+    <div className="min-h-screen grid lg:grid-cols-[1fr_1fr]">
+      {/* ── LEFT PANEL ── */}
+      <div
+        className="hidden lg:flex flex-col justify-between p-14 relative overflow-hidden"
+        style={{ background: "linear-gradient(145deg, #0d1117 0%, #1a1a3e 45%, #0d1b2a 100%)" }}
+      >
+        {/* Animated orbs */}
+        <motion.div
+          animate={{ scale: [1, 1.4, 1], opacity: [0.1, 0.28, 0.1] }}
+          transition={{ duration: 9, repeat: Infinity }}
+          className="absolute -top-24 -right-24 w-[28rem] h-[28rem] bg-indigo-600 rounded-full blur-3xl pointer-events-none"
+        />
+        <motion.div
+          animate={{ scale: [1.2, 1, 1.2], opacity: [0.08, 0.22, 0.08] }}
+          transition={{ duration: 11, repeat: Infinity, delay: 2 }}
+          className="absolute -bottom-24 -left-16 w-80 h-80 bg-violet-600 rounded-full blur-3xl pointer-events-none"
+        />
+        <div
+          className="absolute inset-0 opacity-[0.035] pointer-events-none"
+          style={{
+            backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+        />
 
-        <CardHeader className="pt-12 pb-6 text-center">
-          <div className="mx-auto w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mb-4 border border-indigo-100">
-            <UserPlus className="w-8 h-8 text-indigo-600" />
+        {/* Logo */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative z-10 flex items-center gap-3"
+        >
+          <div className="w-11 h-11 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20 shadow-lg">
+            <BookOpen className="w-6 h-6 text-white" />
           </div>
-          <CardTitle className="text-3xl font-black tracking-tighter">
-            Create Account
-          </CardTitle>
-          <p className="text-gray-500 font-medium text-sm">
-            Join as a Student or Expert Mentor
-          </p>
-        </CardHeader>
+          <span className="text-2xl font-black text-white tracking-tight">SkillBridge</span>
+        </motion.div>
 
-        <CardContent className="px-8">
-          <form
-            id="register-form"
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6"
-          >
-            <div className="grid grid-cols-2 gap-4 p-1.5 bg-gray-100 rounded-2xl border border-gray-200">
-              <button
-                type="button"
-                onClick={() => form.setValue("role", "STUDENT")}
-                className={`flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all ${selectedRole === "STUDENT" ? "bg-white text-indigo-600 shadow-md" : "text-gray-500"}`}
-              >
-                <GraduationCap className="w-5 h-5" /> Student
-              </button>
-              <button
-                type="button"
-                onClick={() => form.setValue("role", "TUTOR")}
-                className={`flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all ${selectedRole === "TUTOR" ? "bg-white text-indigo-600 shadow-md" : "text-gray-500"}`}
-              >
-                <Presentation className="w-5 h-5" /> Tutor
-              </button>
+        {/* Center content */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+          className="relative z-10 space-y-10"
+        >
+          <div className="space-y-5">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-sm border border-white/10 rounded-full text-white/60 text-[11px] font-black uppercase tracking-[0.2em]">
+              <Sparkles className="w-3 h-3 text-yellow-400" />
+              Start for free
             </div>
+            <h2 className="text-5xl font-black text-white leading-[1.05] tracking-tight">
+              Start your
+              <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-violet-300 to-purple-300">
+                success story
+              </span>
+            </h2>
+            <p className="text-white/40 font-medium leading-relaxed text-base max-w-sm">
+              Join thousands of learners and tutors building real-world skills on the fastest-growing learning platform.
+            </p>
+          </div>
 
-            <FieldGroup className="space-y-4">
-              <Controller
-                name="name"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <div className="relative">
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <Input
-                        {...field}
-                        placeholder="Full Name"
-                        className="pl-12 h-14 rounded-2xl bg-gray-50/50 border-2"
-                      />
-                    </div>
-                    {fieldState.error && (
-                      <p className="text-xs text-red-500 mt-1">
-                        {fieldState.error.message}
-                      </p>
-                    )}
-                  </Field>
-                )}
-              />
+          <div className="space-y-4">
+            {perks.map((p, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5 + i * 0.12 }}
+                className="flex items-center gap-3"
+              >
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-white/10"
+                  style={{ background: "rgba(255,255,255,0.06)" }}
+                >
+                  <p.icon className="w-5 h-5 text-indigo-300" />
+                </div>
+                <span className="text-white/60 font-medium text-sm">{p.text}</span>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
 
-              <Controller
-                name="email"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <Input
-                        {...field}
-                        type="email"
-                        placeholder="Email Address"
-                        className="pl-12 h-14 rounded-2xl bg-gray-50/50 border-2"
-                      />
-                    </div>
-                    {fieldState.error && (
-                      <p className="text-xs text-red-500 mt-1">
-                        {fieldState.error.message}
-                      </p>
-                    )}
-                  </Field>
-                )}
-              />
-
-              <Controller
-                name="password"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <Input
-                        {...field}
-                        type="password"
-                        placeholder="Password"
-                        className="pl-12 h-14 rounded-2xl bg-gray-50/50 border-2"
-                      />
-                    </div>
-                    {fieldState.error && (
-                      <p className="text-xs text-red-500 mt-1">
-                        {fieldState.error.message}
-                      </p>
-                    )}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-          </form>
-        </CardContent>
-
-        <CardFooter className="flex flex-col px-8 pb-12 gap-6">
-          <Button
-            type="submit"
-            form="register-form"
-            disabled={form.formState.isSubmitting}
-            className="w-full h-14 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-lg font-bold"
-          >
-            {form.formState.isSubmitting ? (
-              <Loader2 className="w-6 h-6 animate-spin" />
-            ) : (
-              "Get Started"
-            )}
-          </Button>
-          <p className="text-center text-gray-500 text-sm">
-            Already have an account?{" "}
-            <Link
-              href="/login"
-              className="text-indigo-600 font-black hover:underline"
-            >
-              Log In
-            </Link>
+        {/* Bottom */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          className="relative z-10 border-t border-white/10 pt-8"
+        >
+          <p className="text-white/25 text-xs font-medium italic leading-relaxed">
+            &ldquo;An investment in knowledge pays the best interest.&rdquo;
           </p>
-        </CardFooter>
-      </Card>
+          <p className="text-white/20 text-xs font-black mt-1">— Benjamin Franklin</p>
+        </motion.div>
+      </div>
+
+      {/* ── RIGHT PANEL — Form ── */}
+      <div className="flex flex-col justify-center px-8 sm:px-16 lg:px-20 py-12 bg-[#fafafa]">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-sm mx-auto"
+        >
+          {/* Mobile logo */}
+          <div className="flex items-center gap-2 mb-10 lg:hidden">
+            <BookOpen className="w-7 h-7 text-indigo-600" />
+            <span className="text-xl font-black text-indigo-600">SkillBridge</span>
+          </div>
+
+          <div className="mb-8">
+            <h1 className="text-4xl font-black text-slate-900 tracking-tight mb-2">Create account</h1>
+            <p className="text-slate-400 font-medium text-sm">Join as a Student or Expert Tutor</p>
+          </div>
+
+          {/* Role toggle */}
+          <div className="relative grid grid-cols-2 bg-slate-100 rounded-2xl p-1.5 mb-6 gap-1">
+            <motion.div
+              className="absolute top-1.5 bottom-1.5 rounded-xl bg-white shadow-md"
+              animate={{ left: selectedRole === "STUDENT" ? "6px" : "calc(50% + 3px)", width: "calc(50% - 9px)" }}
+              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            />
+            <button
+              type="button"
+              onClick={() => form.setValue("role", "STUDENT")}
+              className={`relative z-10 flex items-center justify-center gap-2 py-3 rounded-xl font-black text-sm transition-colors ${
+                selectedRole === "STUDENT" ? "text-indigo-600" : "text-slate-400"
+              }`}
+            >
+              <GraduationCap className="w-4 h-4" /> Student
+            </button>
+            <button
+              type="button"
+              onClick={() => form.setValue("role", "TUTOR")}
+              className={`relative z-10 flex items-center justify-center gap-2 py-3 rounded-xl font-black text-sm transition-colors ${
+                selectedRole === "TUTOR" ? "text-indigo-600" : "text-slate-400"
+              }`}
+            >
+              <Presentation className="w-4 h-4" /> Tutor
+            </button>
+          </div>
+
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* Name */}
+            <Controller
+              name="name"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <div>
+                  <div className="relative group">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-slate-400 group-focus-within:text-indigo-600 transition-colors pointer-events-none" />
+                    <input
+                      {...field}
+                      placeholder="Full Name"
+                      className={`w-full pl-11 pr-4 h-[52px] rounded-2xl border-2 text-sm font-medium text-slate-800 placeholder-slate-300 bg-white focus:outline-none transition-all duration-200 ${
+                        fieldState.error
+                          ? "border-rose-300 focus:border-rose-400 focus:ring-4 focus:ring-rose-100"
+                          : "border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100/70"
+                      }`}
+                    />
+                  </div>
+                  {fieldState.error && (
+                    <p className="text-xs text-rose-500 font-bold mt-1.5 ml-1">{fieldState.error.message}</p>
+                  )}
+                </div>
+              )}
+            />
+
+            {/* Email */}
+            <Controller
+              name="email"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <div>
+                  <div className="relative group">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-slate-400 group-focus-within:text-indigo-600 transition-colors pointer-events-none" />
+                    <input
+                      {...field}
+                      type="email"
+                      placeholder="Email Address"
+                      className={`w-full pl-11 pr-4 h-[52px] rounded-2xl border-2 text-sm font-medium text-slate-800 placeholder-slate-300 bg-white focus:outline-none transition-all duration-200 ${
+                        fieldState.error
+                          ? "border-rose-300 focus:border-rose-400 focus:ring-4 focus:ring-rose-100"
+                          : "border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100/70"
+                      }`}
+                    />
+                  </div>
+                  {fieldState.error && (
+                    <p className="text-xs text-rose-500 font-bold mt-1.5 ml-1">{fieldState.error.message}</p>
+                  )}
+                </div>
+              )}
+            />
+
+            {/* Password */}
+            <Controller
+              name="password"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <div>
+                  <div className="relative group">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-slate-400 group-focus-within:text-indigo-600 transition-colors pointer-events-none" />
+                    <input
+                      {...field}
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Password (min. 6 chars)"
+                      className={`w-full pl-11 pr-12 h-[52px] rounded-2xl border-2 text-sm font-medium text-slate-800 placeholder-slate-300 bg-white focus:outline-none transition-all duration-200 ${
+                        fieldState.error
+                          ? "border-rose-300 focus:border-rose-400 focus:ring-4 focus:ring-rose-100"
+                          : "border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100/70"
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-400 hover:text-indigo-600 uppercase tracking-wider transition-colors"
+                    >
+                      {showPassword ? "Hide" : "Show"}
+                    </button>
+                  </div>
+                  {fieldState.error && (
+                    <p className="text-xs text-rose-500 font-bold mt-1.5 ml-1">{fieldState.error.message}</p>
+                  )}
+                </div>
+              )}
+            />
+
+            {/* Submit */}
+            <motion.button
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              disabled={form.formState.isSubmitting}
+              className="w-full h-[52px] mt-1 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-black text-sm shadow-xl shadow-indigo-200 hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+            >
+              {form.formState.isSubmitting ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>Get Started Free <ArrowRight className="w-4 h-4" /></>
+              )}
+            </motion.button>
+          </form>
+
+          <div className="relative my-8">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-200" />
+            </div>
+            <div className="relative text-center">
+              <span className="bg-[#fafafa] px-3 text-xs text-slate-400 font-medium">Already have an account?</span>
+            </div>
+          </div>
+
+          <Link
+            href="/login"
+            className="block w-full h-[52px] rounded-2xl border-2 border-slate-200 text-slate-700 font-black text-sm hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all text-center leading-[52px]"
+          >
+            Sign in instead →
+          </Link>
+
+          <p className="text-center text-slate-400 text-xs font-medium mt-6 leading-relaxed">
+            By creating an account you agree to our{" "}
+            <span className="text-indigo-600 font-bold cursor-pointer">Terms of Service</span> &{" "}
+            <span className="text-indigo-600 font-bold cursor-pointer">Privacy Policy</span>
+          </p>
+        </motion.div>
+      </div>
     </div>
   );
 };

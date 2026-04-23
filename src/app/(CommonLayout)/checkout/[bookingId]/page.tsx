@@ -9,10 +9,11 @@ export default async function CheckoutPage({
   params: Promise<{ bookingId: string }>;
 }) {
   const { bookingId } = await params;
-  const [user, result] = await Promise.all([getUser(), createPaymentIntent(bookingId)]);
-
+  const user = await getUser();
   if (!user) redirect("/login");
   if ((user as any).role !== "STUDENT") redirect("/dashboard");
+
+  const result = await createPaymentIntent(bookingId);
 
   if (!result.success || !result.data?.clientSecret) {
     return (

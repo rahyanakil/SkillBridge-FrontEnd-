@@ -2,28 +2,25 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, Loader2, Lock, Mail, ShieldCheck } from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  BookOpen,
+  GraduationCap,
+  Loader2,
+  Lock,
+  Mail,
+  Sparkles,
+  Star,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { loginUser } from "@/services/auth";
 
 const formSchema = z.object({
@@ -33,10 +30,17 @@ const formSchema = z.object({
 
 type LoginFormValues = z.infer<typeof formSchema>;
 
+const features = [
+  { icon: GraduationCap, text: "Learn from 180+ expert tutors" },
+  { icon: Users, text: "Join 2,400+ active learners worldwide" },
+  { icon: Star, text: "4.9★ average satisfaction rating" },
+];
+
 export const LoginForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectPath = searchParams.get("redirect") || "/";
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
@@ -59,117 +63,225 @@ export const LoginForm = () => {
   };
 
   return (
-    <div className="w-full flex items-center justify-center p-4">
-      <Card className="w-full max-w-md border-none shadow-2xl rounded-[2.5rem] bg-white/90 backdrop-blur-xl overflow-hidden relative">
-        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-violet-600 via-indigo-500 to-purple-600" />
+    <div className="min-h-screen grid lg:grid-cols-[1fr_1fr]">
+      {/* ── LEFT PANEL ── */}
+      <div
+        className="hidden lg:flex flex-col justify-between p-14 relative overflow-hidden"
+        style={{ background: "linear-gradient(145deg, #0f0c29 0%, #302b63 50%, #24243e 100%)" }}
+      >
+        {/* Animated orbs */}
+        <motion.div
+          animate={{ scale: [1, 1.4, 1], opacity: [0.12, 0.3, 0.12] }}
+          transition={{ duration: 8, repeat: Infinity }}
+          className="absolute -top-20 -left-20 w-96 h-96 bg-violet-600 rounded-full blur-3xl pointer-events-none"
+        />
+        <motion.div
+          animate={{ scale: [1.2, 1, 1.2], opacity: [0.08, 0.25, 0.08] }}
+          transition={{ duration: 10, repeat: Infinity, delay: 3 }}
+          className="absolute -bottom-32 -right-20 w-[32rem] h-[32rem] bg-indigo-500 rounded-full blur-3xl pointer-events-none"
+        />
+        {/* Grid texture */}
+        <div
+          className="absolute inset-0 opacity-[0.04] pointer-events-none"
+          style={{
+            backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+        />
 
-        <CardHeader className="pt-10 pb-6 text-center">
-          <div className="mx-auto w-16 h-16 bg-violet-100 rounded-3xl flex items-center justify-center mb-4 shadow-inner">
-            <ShieldCheck className="w-8 h-8 text-violet-600" />
+        {/* Logo */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative z-10 flex items-center gap-3"
+        >
+          <div className="w-11 h-11 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20 shadow-lg">
+            <BookOpen className="w-6 h-6 text-white" />
           </div>
-          <CardTitle className="text-3xl font-black tracking-tighter text-gray-900">
-            Welcome Back
-          </CardTitle>
-          <p className="text-gray-500 font-medium text-sm">
-            Enter your credentials to access your account
-          </p>
-        </CardHeader>
+          <span className="text-2xl font-black text-white tracking-tight">SkillBridge</span>
+        </motion.div>
 
-        <CardContent className="px-8">
-          <form id="login-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FieldGroup className="space-y-5">
-              <Controller
-                name="email"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel className="text-xs font-bold uppercase tracking-widest text-gray-400 ml-1">
-                      Email Address
-                    </FieldLabel>
-                    <div className="relative group">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-violet-600 transition-colors">
-                        <Mail className="w-5 h-5" />
-                      </div>
-                      <Input
-                        {...field}
-                        type="email"
-                        placeholder="name@example.com"
-                        className="pl-12 h-14 rounded-2xl border-gray-100 bg-gray-50/50 focus:bg-white focus:ring-4 focus:ring-violet-100 transition-all border-2"
-                      />
-                    </div>
-                    {fieldState.invalid && (
-                      <FieldError
-                        className="text-xs font-bold mt-1 ml-1 text-red-500"
-                        errors={[{ message: fieldState.error?.message }]}
-                      />
-                    )}
-                  </Field>
-                )}
-              />
-
-              <Controller
-                name="password"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <div className="flex justify-between items-center ml-1">
-                      <FieldLabel className="text-xs font-bold uppercase tracking-widest text-gray-400">
-                        Password
-                      </FieldLabel>
-                      <Link href="#" className="text-xs font-bold text-violet-600 hover:underline">
-                        Forgot?
-                      </Link>
-                    </div>
-                    <div className="relative group">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-violet-600 transition-colors">
-                        <Lock className="w-5 h-5" />
-                      </div>
-                      <Input
-                        {...field}
-                        type="password"
-                        placeholder="••••••••"
-                        className="pl-12 h-14 rounded-2xl border-gray-100 bg-gray-50/50 focus:bg-white focus:ring-4 focus:ring-violet-100 transition-all border-2"
-                      />
-                    </div>
-                    {fieldState.invalid && (
-                      <FieldError
-                        className="text-xs font-bold mt-1 ml-1 text-red-500"
-                        errors={[{ message: fieldState.error?.message }]}
-                      />
-                    )}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-          </form>
-        </CardContent>
-
-        <CardFooter className="flex flex-col px-8 pb-10 gap-6">
-          <Button
-            type="submit"
-            form="login-form"
-            disabled={form.formState.isSubmitting}
-            className="w-full h-14 rounded-2xl bg-violet-600 hover:bg-violet-700 text-lg font-bold shadow-xl shadow-violet-200 transition-all hover:scale-[1.02] active:scale-[0.98]"
-          >
-            {form.formState.isSubmitting ? (
-              <Loader2 className="w-6 h-6 animate-spin" />
-            ) : (
-              <span className="flex items-center gap-2">
-                Sign In <ArrowRight className="w-5 h-5" />
+        {/* Center content */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+          className="relative z-10 space-y-10"
+        >
+          <div className="space-y-5">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-sm border border-white/10 rounded-full text-white/60 text-[11px] font-black uppercase tracking-[0.2em]">
+              <Sparkles className="w-3 h-3 text-yellow-400" />
+              Welcome back
+            </div>
+            <h2 className="text-5xl font-black text-white leading-[1.05] tracking-tight">
+              Continue your
+              <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-300 via-indigo-300 to-purple-300">
+                learning journey
               </span>
-            )}
-          </Button>
-
-          <div className="text-center">
-            <p className="text-gray-500 text-sm font-medium">
-              Don&apos;t have an account?{" "}
-              <Link href="/register" className="text-violet-600 font-bold hover:underline">
-                Create one now
-              </Link>
+            </h2>
+            <p className="text-white/40 font-medium leading-relaxed text-base max-w-sm">
+              Access your personalized courses, connect with expert tutors, and track your progress.
             </p>
           </div>
-        </CardFooter>
-      </Card>
+
+          <div className="space-y-4">
+            {features.map((f, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5 + i * 0.12 }}
+                className="flex items-center gap-3"
+              >
+                <div className="w-10 h-10 rounded-xl bg-white/8 border border-white/10 flex items-center justify-center shrink-0 backdrop-blur-sm"
+                     style={{ background: "rgba(255,255,255,0.06)" }}>
+                  <f.icon className="w-5 h-5 text-violet-300" />
+                </div>
+                <span className="text-white/60 font-medium text-sm">{f.text}</span>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Bottom quote */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          className="relative z-10 border-t border-white/10 pt-8"
+        >
+          <p className="text-white/25 text-xs font-medium italic leading-relaxed">
+            &ldquo;The more that you learn, the more places you&apos;ll go.&rdquo;
+          </p>
+          <p className="text-white/20 text-xs font-black mt-1">— Dr. Seuss</p>
+        </motion.div>
+      </div>
+
+      {/* ── RIGHT PANEL — Form ── */}
+      <div className="flex flex-col justify-center px-8 sm:px-16 lg:px-20 py-12 bg-[#fafafa]">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-sm mx-auto"
+        >
+          {/* Mobile logo */}
+          <div className="flex items-center gap-2 mb-10 lg:hidden">
+            <BookOpen className="w-7 h-7 text-violet-600" />
+            <span className="text-xl font-black text-violet-600">SkillBridge</span>
+          </div>
+
+          <div className="mb-10">
+            <h1 className="text-4xl font-black text-slate-900 tracking-tight mb-2">Sign in</h1>
+            <p className="text-slate-400 font-medium text-sm">Enter your credentials to continue</p>
+          </div>
+
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            {/* Email */}
+            <Controller
+              name="email"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-400 mb-2">
+                    Email Address
+                  </label>
+                  <div className="relative group">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-slate-400 group-focus-within:text-violet-600 transition-colors pointer-events-none" />
+                    <input
+                      {...field}
+                      type="email"
+                      placeholder="name@example.com"
+                      className={`w-full pl-11 pr-4 h-[52px] rounded-2xl border-2 text-sm font-medium text-slate-800 placeholder-slate-300 bg-white focus:outline-none transition-all duration-200 ${
+                        fieldState.error
+                          ? "border-rose-300 focus:border-rose-400 focus:ring-4 focus:ring-rose-100"
+                          : "border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-100/70"
+                      }`}
+                    />
+                  </div>
+                  {fieldState.error && (
+                    <p className="text-xs text-rose-500 font-bold mt-1.5 ml-1">{fieldState.error.message}</p>
+                  )}
+                </div>
+              )}
+            />
+
+            {/* Password */}
+            <Controller
+              name="password"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+                      Password
+                    </label>
+                    <Link href="#" className="text-xs font-bold text-violet-600 hover:text-violet-700 transition-colors">
+                      Forgot?
+                    </Link>
+                  </div>
+                  <div className="relative group">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-slate-400 group-focus-within:text-violet-600 transition-colors pointer-events-none" />
+                    <input
+                      {...field}
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      className={`w-full pl-11 pr-12 h-[52px] rounded-2xl border-2 text-sm font-medium text-slate-800 placeholder-slate-300 bg-white focus:outline-none transition-all duration-200 ${
+                        fieldState.error
+                          ? "border-rose-300 focus:border-rose-400 focus:ring-4 focus:ring-rose-100"
+                          : "border-slate-200 focus:border-violet-500 focus:ring-4 focus:ring-violet-100/70"
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-400 hover:text-violet-600 uppercase tracking-wider transition-colors"
+                    >
+                      {showPassword ? "Hide" : "Show"}
+                    </button>
+                  </div>
+                  {fieldState.error && (
+                    <p className="text-xs text-rose-500 font-bold mt-1.5 ml-1">{fieldState.error.message}</p>
+                  )}
+                </div>
+              )}
+            />
+
+            {/* Submit */}
+            <motion.button
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              disabled={form.formState.isSubmitting}
+              className="w-full h-[52px] mt-1 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-black text-sm shadow-xl shadow-violet-200 hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+            >
+              {form.formState.isSubmitting ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>Sign In <ArrowRight className="w-4 h-4" /></>
+              )}
+            </motion.button>
+          </form>
+
+          <div className="relative my-8">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-200" />
+            </div>
+            <div className="relative text-center">
+              <span className="bg-[#fafafa] px-3 text-xs text-slate-400 font-medium">New to SkillBridge?</span>
+            </div>
+          </div>
+
+          <Link
+            href="/register"
+            className="block w-full h-[52px] rounded-2xl border-2 border-slate-200 text-slate-700 font-black text-sm hover:border-violet-400 hover:text-violet-600 hover:bg-violet-50 transition-all text-center leading-[52px]"
+          >
+            Create a free account →
+          </Link>
+        </motion.div>
+      </div>
     </div>
   );
 };

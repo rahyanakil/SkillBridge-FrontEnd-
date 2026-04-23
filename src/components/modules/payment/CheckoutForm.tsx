@@ -59,6 +59,10 @@ export function CheckoutForm({ bookingId, amount, courseTitle, onConfirm, onSucc
       setSucceeded(true);
       toast.success("Payment successful! Your booking is now confirmed.");
       onSuccess();
+    } else if (paymentIntent?.status === "processing") {
+      setError("Your payment is processing. Check your dashboard shortly for confirmation.");
+    } else {
+      setError("Payment did not complete. Please try again or use a different payment method.");
     }
 
     setLoading(false);

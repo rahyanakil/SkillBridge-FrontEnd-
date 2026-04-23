@@ -33,6 +33,7 @@ export const confirmPayment = async (bookingId: string, paymentIntentId: string)
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: token },
       body: JSON.stringify({ bookingId, paymentIntentId }),
+      cache: "no-store",
     });
     return await res.json();
   } catch {
