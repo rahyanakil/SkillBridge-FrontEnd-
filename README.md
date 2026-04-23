@@ -1,179 +1,163 @@
-# SkillBridge Frontend – Learning & Tutoring Platform
+# SkillBridge Frontend
 
-A modern, responsive, and production-ready frontend built with **Next.js (App Router), TypeScript, Tailwind CSS, shadcn/ui**, and full integration with a Node.js + Prisma backend.
-
-## 🚀 Live Demo
-
-Frontend Live: https://your-frontend.vercel.app  
-Backend API: https://your-backend.vercel.app
+Modern tutoring platform UI built with Next.js 16 (App Router), React 19, TypeScript, and Tailwind CSS 4. Connects to the SkillBridge Express + Prisma backend.
 
 ---
 
-# 📌 Features
+## Live URLs
 
-### 🌍 Public Pages
+| Service  | URL                                 |
+| -------- | ----------------------------------- |
+| Frontend | https://your-frontend.vercel.app    |
+| Backend  | https://your-backend.vercel.app     |
 
-- Beautiful landing page with carousel hero
-- Browse courses with real-time search & price filtering
-- Dynamic tutor profile pages
-- Login & Register authentication
-- Professional, clean UI with responsive layout
+---
 
-### 🎓 Student Dashboard
+## Tech Stack
 
-- View & update profile
+| Technology              | Version   | Purpose                        |
+| ----------------------- | --------- | ------------------------------ |
+| Next.js (App Router)    | 16.1.6    | Framework & server components  |
+| React                   | 19.2.3    | UI library                     |
+| TypeScript              | ^5        | Type safety                    |
+| Tailwind CSS            | ^4        | Utility-first styling          |
+| shadcn/ui               | ^3.8.5    | Accessible UI primitives       |
+| Framer Motion           | ^12.34.3  | Animations                     |
+| React Hook Form + Zod   | ^7 / ^4   | Form management & validation   |
+| Sonner                  | ^2.0.7    | Toast notifications            |
+| Stripe.js               | ^9.2.0    | Payment processing             |
+| Embla Carousel          | ^8.6.0    | Hero & content carousels       |
+| jwt-decode              | ^4.0.0    | Decode auth token client-side  |
+
+---
+
+## Features
+
+### Public Pages
+- Landing page with animated hero carousel
+- Course listing with search and price filtering
+- Individual course detail pages
+- Public tutor profile pages
+- Login and registration
+
+### Student Dashboard
+- View and edit profile (avatar, name, email)
 - Browse and book courses
-- View all bookings with status badges
-- **Pay for accepted bookings via Stripe**
+- View bookings with live status badges
+- Pay for accepted bookings via Stripe
 - Enter classroom via secure link
 - Cancel pending bookings
 - Leave reviews on completed courses
-- Personalized course recommendations
 
-### 👨‍🏫 Tutor Dashboard
-
-- Setup & manage tutor profile
+### Tutor Dashboard
+- Create and manage tutor profile (bio, expertise, hourly rate)
 - Add, edit, and delete courses
-- Accept or reject student booking requests
-- Mark sessions as completed
-- View earnings breakdown by course
-- Enter classroom sessions
+- Accept, reject, or complete student bookings
+- View all incoming booking requests
 
-### 🛠 Admin Dashboard
-
-- Manage all users (ban/unban)
-- Manage categories
-- View and manage all bookings
-- Platform-wide stats overview
-
-### 💳 Stripe Payments
-
-- Students pay for ACCEPTED bookings via **Stripe Payment Element**
-- Secure client secret generated server-side via `createPaymentIntent`
-- Billing details collected by the Stripe-hosted Payment Element
-- Payment confirmation handled by `stripe.confirmPayment()` with `redirect: "if_required"`
-- Backend payment verification on success via `confirmPayment` server action
-- Test mode supported — use card `4242 4242 4242 4242`, any future date, any CVC
+### Admin Dashboard
+- Ban and unban platform users
+- Create, update, and delete categories
+- View and manage all platform bookings
 
 ---
 
-# 🧩 Tech Stack
+## Environment Variables
 
-### **Frontend**
-
-- **Next.js 14+ (App Router & Server Actions)**
-- **TypeScript**
-- **Tailwind CSS**
-- **shadcn/ui**
-- **React Hook Form + Zod validation**
-- **Sonner (toast notifications)**
-- **Stripe.js + @stripe/react-stripe-js** — payment processing
-
-### **Backend Integration**
-
-- Full REST API connected to:
-  - Authentication (JWT via cookie)
-  - Tutor module
-  - Courses
-  - Bookings
-  - Reviews
-  - Payments (Stripe)
-  - Admin panel
-
----
-
-# 🔐 Environment Variables
-
-Create a `.env` file in the `skillbridge-frontend/` directory:
+Create a `.env.local` file in `skillbridge-frontend/`:
 
 ```env
 NEXT_PUBLIC_BASE_URL=http://localhost:5000/api/v1
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 ```
 
-> The backend must also have `STRIPE_SECRET_KEY` configured for payment intent creation to work.
+The backend must have `STRIPE_SECRET_KEY` set for payment intents to work.
 
 ---
 
-# 💳 Stripe Payment Flow
+## Getting Started
+
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Start development server
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+Make sure the backend is running on `http://localhost:5000` first.
+
+### Available Scripts
+
+| Script          | Description                |
+| --------------- | -------------------------- |
+| `npm run dev`   | Start Next.js dev server   |
+| `npm run build` | Build for production       |
+| `npm run start` | Start production server    |
+| `npm run lint`  | Run ESLint                 |
+
+---
+
+## Folder Structure
 
 ```
-Student clicks "Pay" on an ACCEPTED booking
-        ↓
-Server Action: createPaymentIntent(bookingId)
-   → Backend creates Stripe PaymentIntent
-   → Returns { clientSecret, amount, courseTitle }
-        ↓
-CheckoutPage (server component) renders CheckoutClient
-        ↓
-CheckoutClient initializes <Elements stripe={...} options={{ clientSecret }}>
-        ↓
-CheckoutForm renders <PaymentElement> (Stripe-hosted fields)
-        ↓
-stripe.confirmPayment() called on submit
-        ↓
-Server Action: confirmPayment(bookingId, paymentIntentId)
-   → Backend verifies payment with Stripe
-   → Updates booking paymentStatus to PAID
-        ↓
-Student redirected to dashboard — booking confirmed
+skillbridge-frontend/
+├── src/
+│   ├── app/
+│   │   ├── (CommonLayout)/
+│   │   │   ├── page.tsx                  # Landing page
+│   │   │   ├── courses/
+│   │   │   │   ├── page.tsx              # Course listing with search
+│   │   │   │   └── [id]/page.tsx         # Course detail
+│   │   │   ├── tutor/[tutorId]/          # Public tutor profile
+│   │   │   ├── profile/                  # Edit user profile
+│   │   │   └── checkout/[bookingId]/     # Stripe checkout
+│   │   ├── (DashboardLayout)/
+│   │   │   ├── @student/dashboard/       # Student dashboard (server component)
+│   │   │   ├── @tutor/dashboard/         # Tutor dashboard (server component)
+│   │   │   └── @admin/dashboard/         # Admin dashboard
+│   │   ├── login/
+│   │   ├── register/
+│   │   ├── layout.tsx
+│   │   └── globals.css
+│   │
+│   ├── components/
+│   │   ├── ui/                           # shadcn/ui primitives
+│   │   ├── modules/
+│   │   │   ├── home/                     # Hero, CategorySection, ReviewSection
+│   │   │   ├── course/                   # CourseCard, CourseDetails
+│   │   │   ├── tutor/                    # TutorSection, TutorDashboard
+│   │   │   ├── student/                  # StudentDashboard
+│   │   │   ├── auth/                     # LoginForm, RegisterForm
+│   │   │   └── payment/                  # CheckoutClient, CheckoutForm
+│   │   └── shared/                       # Navbar, Footer
+│   │
+│   └── services/                         # Next.js server actions ("use server")
+│       ├── auth/                         # getUser, login, register
+│       ├── course/                       # getAllCourse, getSingleCourse
+│       ├── category/                     # getAllCategories
+│       ├── tutor/                        # getAllPublicTutors, getSingleTutor
+│       ├── reviews/                      # getAllReviews, createReview
+│       ├── payment/                      # createPaymentIntent, confirmPayment
+│       ├── profile/                      # getProfile, updateProfile
+│       ├── booking/                      # createBooking, cancelBooking
+│       ├── notification/                 # getNotifications
+│       └── Dashboard/
+│           ├── studentActions.ts         # Student server actions
+│           ├── tutorActions.ts           # Tutor server actions
+│           └── adminActions.ts           # Admin server actions
 ```
 
 ---
 
-# 📁 Folder Structure
+## Authentication
 
-```
-src/
-├── app/
-│   ├── (CommonLayout)/
-│   │   ├── page.tsx               # Landing page
-│   │   ├── courses/
-│   │   │   ├── page.tsx           # Course listing with search
-│   │   │   └── [id]/page.tsx      # Course detail
-│   │   ├── tutor/[tutorId]/       # Tutor profile
-│   │   ├── profile/               # User profile
-│   │   └── checkout/[bookingId]/  # Stripe checkout page
-│   ├── (DashboardLayout)/
-│   │   ├── @student/dashboard/    # Student dashboard (server-fetched)
-│   │   ├── @tutor/dashboard/      # Tutor dashboard (server-fetched)
-│   │   └── @admin/dashboard/      # Admin dashboard
-│   ├── login/
-│   └── register/
-│
-├── components/
-│   ├── ui/                        # shadcn/ui primitives
-│   ├── modules/
-│   │   ├── home/                  # Hero, CategorySection, ReviewSection
-│   │   ├── course/                # CourseDetails, CourseCard
-│   │   ├── tutor/                 # TutorSection, TutorDashboard
-│   │   ├── student/               # StudentDashboard
-│   │   ├── auth/                  # LoginForm, RegisterForm
-│   │   └── payment/               # CheckoutClient, CheckoutForm
-│   └── shared/                    # Navbar, Footer
-│
-├── services/
-│   ├── auth/                      # getUser, login, register
-│   ├── course/                    # getAllCourse, getSingleCourse
-│   ├── category/                  # getAllCategories
-│   ├── tutor/                     # getAllPublicTutors, getSingleTutor
-│   ├── reviews/                   # getAllReviews, createReview
-│   ├── payment/                   # createPaymentIntent, confirmPayment
-│   ├── profile/                   # getProfile, updateProfile
-│   └── Dashboard/
-│       ├── studentActions.ts      # Student-specific server actions
-│       ├── tutorActions.ts        # Tutor-specific server actions
-│       └── adminActions.ts        # Admin-specific server actions
-```
-
----
-
-# 🔐 Authentication
-
-- JWT stored in **httpOnly cookie** (set by backend)
-- `getUser()` server action reads cookie on each request
-- Role-based parallel route rendering (`@student`, `@tutor`, `@admin`)
-- Middleware-style redirect in server components:
+- JWT is stored in an **httpOnly cookie** set by the backend
+- `getUser()` server action decodes the cookie on every server render
+- Role-based parallel routes (`@student`, `@tutor`, `@admin`) render the correct dashboard without client-side checks
+- Server components redirect unauthenticated or wrong-role requests:
 
 ```tsx
 const user = await getUser();
@@ -183,25 +167,50 @@ if (user.role !== "STUDENT") redirect("/dashboard");
 
 ---
 
-# ⚡ Performance
+## Stripe Payment Flow
 
-- All dashboard pages are **server components** — data fetched before HTML is sent
-- All independent fetches use `Promise.all()` — no sequential waterfalls
-- `loading.tsx` files on every major route for instant skeleton feedback
-- Course and review data cached with `next: { revalidate: 300 }`
-- `TutorSection` rendered as a server component — zero client waterfall
-- `next/image` used throughout with `unoptimized` for localhost/SVG sources
+```
+Student clicks "Pay" on an ACCEPTED booking
+        ↓
+Server Action: createPaymentIntent(bookingId)
+   → Backend creates Stripe PaymentIntent
+   → Returns { clientSecret, amount, courseTitle }
+        ↓
+CheckoutPage renders <Elements stripe={...} options={{ clientSecret }}>
+        ↓
+CheckoutForm renders <PaymentElement> (Stripe-hosted fields)
+        ↓
+stripe.confirmPayment() called on form submit
+        ↓
+Server Action: confirmPayment(bookingId, paymentIntentId)
+   → Backend verifies with Stripe
+   → Updates booking paymentStatus to PAID
+        ↓
+Student redirected to dashboard — booking confirmed
+```
+
+**Test card:** `4242 4242 4242 4242` · any future date · any CVC
 
 ---
 
-# 🛠 Getting Started
+## Performance Notes
 
-```bash
-cd skillbridge-frontend
-npm install
-npm run dev
-```
+- All dashboard pages are **server components** — data fetched before HTML is sent to the client
+- Independent data fetches use `Promise.all()` to avoid sequential waterfalls
+- Course and review data uses `next: { revalidate: 300 }` for ISR caching
+- `loading.tsx` files on every major route for instant skeleton feedback
+- `next/image` used throughout for optimized image delivery
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+---
 
-> Make sure the backend is running on `http://localhost:5000` before starting the frontend.
+## Backend Connection
+
+All API calls are Next.js **server actions** located in `src/services/`. They communicate with the backend using the `NEXT_PUBLIC_BASE_URL` env variable and attach the JWT from cookies automatically.
+
+Route protection is handled via `src/proxy.ts` middleware using Next.js `middleware.ts`.
+
+---
+
+## License
+
+MIT — for educational use.

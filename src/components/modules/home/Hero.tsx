@@ -101,7 +101,7 @@ export function HeroCarousel() {
           initial={{ scale: 1.08, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
+          transition={{ duration: 1, ease: "easeOut" as const }}
           className="absolute inset-0"
         >
           <Image

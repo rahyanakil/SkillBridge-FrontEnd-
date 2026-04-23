@@ -72,7 +72,7 @@ const stagger = {
   container: { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } },
   item: {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" as const } },
   },
 };
 
