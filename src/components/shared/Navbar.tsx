@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { getUser, UserLogOut } from "@/services/auth";
+import { UserLogOut } from "@/services/auth";
 import NotificationBell from "@/components/shared/NotificationBell";
 import {
   BookOpen,
@@ -25,10 +25,13 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-// User Interface
 interface User {
   name: string;
-  role: string; // "STUDENT", "TUTOR", or "ADMIN"
+  role: string;
+}
+
+interface NavbarProps {
+  initialUser: { id: string; name: string; email: string; role: string } | null;
 }
 
 const navItems = [
@@ -37,11 +40,16 @@ const navItems = [
   { href: "/category", label: "Category" },
 ];
 
-export default function Navbar() {
-  const [user, setUser] = useState<User | null>(null);
+export default function Navbar({ initialUser }: NavbarProps) {
+  const [user, setUser] = useState<User | null>(initialUser);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+
+  // Sync when layout re-renders after login/logout + router.refresh()
+  useEffect(() => {
+    setUser(initialUser);
+  }, [initialUser]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -51,14 +59,6 @@ export default function Navbar() {
 
   const isActive = (path: string) =>
     pathname === path ? "text-violet-600 font-bold" : "text-muted-foreground";
-
-  useEffect(() => {
-    const getCurrentUser = async () => {
-      const userdata = await getUser();
-      setUser(userdata);
-    };
-    getCurrentUser();
-  }, [pathname]); // Pathname চেঞ্জ হলে ইউজার চেক করবে
 
   const handleLogout = async () => {
     try {
