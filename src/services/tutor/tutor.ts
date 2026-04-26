@@ -20,7 +20,7 @@ export const getSingleTutor = async (id: string) => {
   try {
     const res = await fetch(`${BASE_URL}/tutors/profile/${id}`, {
       method: "GET",
-      cache: "no-store",
+      next: { revalidate: 300 },
     });
     if (!res.ok) return { success: false, data: null, message: "Tutor not found" };
     return await res.json();
