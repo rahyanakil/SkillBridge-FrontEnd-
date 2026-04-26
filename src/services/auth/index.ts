@@ -27,7 +27,12 @@ export const loginUser = async (userData: FieldValues) => {
     const result = await res.json();
     const storeCookies = await cookies();
     if (result.success && result.data?.token) {
-      storeCookies.set("token", result.data.token);
+      storeCookies.set("token", result.data.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60,
+      });
     }
     return result;
   } catch (error) {
