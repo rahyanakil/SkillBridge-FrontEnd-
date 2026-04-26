@@ -1,9 +1,12 @@
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
-const CommonLayout = ({ children }: { children: React.ReactNode }) => {
+import { getUser } from "@/services/auth";
+
+const CommonLayout = async ({ children }: { children: React.ReactNode }) => {
+  const user = await getUser();
   return (
     <div>
-      <Navbar />
+      <Navbar initialUser={user} />
       <div className="container mx-auto px-4">{children}</div>
       <Footer />
     </div>
