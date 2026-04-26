@@ -6,19 +6,19 @@ Modern tutoring platform UI built with Next.js 16 (App Router), React 19, TypeSc
 
 ## Live URLs
 
-| Service  | URL                                                              |
-| -------- | ---------------------------------------------------------------- |
-| Frontend | https://skillbridge-frontend-ruby.vercel.app                    |
-| Backend  | https://vercel.com/rahyanakils-projects/skillbridge-tutor-backend |
+| Service  | URL                                              |
+| -------- | ------------------------------------------------ |
+| Frontend | https://skillbridge-frontend-ruby.vercel.app     |
+| Backend  | https://skillbridge-tutor-backend.vercel.app     |
 
 ---
 
 ## Admin Credentials
 
-| Field    | Value                  |
-| -------- | ---------------------- |
-| Email    | admin@gmail.com        |
-| Password | StrongPassword123      |
+| Field    | Value             |
+| -------- | ----------------- |
+| Email    | admin@gmail.com   |
+| Password | StrongPassword123 |
 
 > Use these credentials to log in as admin and access the admin dashboard.
 
