@@ -8,8 +8,8 @@ Modern tutoring platform UI built with Next.js 16 (App Router), React 19, TypeSc
 
 | Service  | URL                                 |
 | -------- | ----------------------------------- |
-| Frontend | https://your-frontend.vercel.app    |
-| Backend  | https://your-backend.vercel.app     |
+| Frontend |https://skillbridge-frontend-ruby.vercel.app/    |
+| Backend  |  https://skillbridge-tutor-backend.vercel.app     |
 
 ---
 
