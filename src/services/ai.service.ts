@@ -1,7 +1,6 @@
 "use server";
 
 import Groq from "groq-sdk";
-import { cookies } from "next/headers";
 
 const SYSTEM_PROMPT = `You are a professional AI Tutor on SkillBridge, an expert online tutoring platform.
 Your role is to guide students step-by-step with clear, encouraging explanations.
@@ -19,10 +18,6 @@ const getGroq = (): Groq => {
 };
 
 export const askAITutor = async (prompt: string): Promise<string> => {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
-  if (!token) return "You must be logged in to use the AI Tutor.";
-
   try {
     const completion = await getGroq().chat.completions.create({
       model: "llama-3.3-70b-versatile",
@@ -32,7 +27,6 @@ export const askAITutor = async (prompt: string): Promise<string> => {
         { role: "user", content: prompt },
       ],
     });
-
     return completion.choices[0]?.message?.content?.trim() || "No response received.";
   } catch (err: any) {
     if (err?.status === 429 || err?.message?.includes("429")) {
