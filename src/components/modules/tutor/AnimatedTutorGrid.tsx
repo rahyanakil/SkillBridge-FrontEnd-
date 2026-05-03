@@ -88,7 +88,7 @@ export function AnimatedTutorGrid({ tutors }: { tutors: any[] }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
       {tutors.length > 0 ? (
-        tutors.slice(0, 6).map((tutor, index) => (
+        tutors.map((tutor, index) => (
           <TutorCard key={tutor.id} tutor={tutor} index={index} />
         ))
       ) : (

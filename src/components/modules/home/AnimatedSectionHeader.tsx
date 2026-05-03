@@ -25,12 +25,13 @@ export function AnimatedSectionHeader({ badge, headline, highlight, description,
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 bg-violet-100 text-violet-600 rounded-full text-[11px] font-black uppercase tracking-[0.2em]"
+          className="inline-flex items-center gap-2 px-4 py-1.5 bg-brand-dim text-brand rounded-full text-[11px] font-black uppercase tracking-[0.2em]"
         >
-          <span className="w-1.5 h-1.5 bg-violet-500 rounded-full animate-pulse" />
+          <span className="w-1.5 h-1.5 bg-violet-500 dark:bg-violet-400 rounded-full animate-pulse" />
           {badge}
         </motion.div>
-        <h2 className="text-4xl md:text-5xl font-black text-slate-900 italic leading-tight">
+
+        <h2 className="text-4xl md:text-5xl font-black text-foreground italic leading-tight">
           <motion.span
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -39,14 +40,14 @@ export function AnimatedSectionHeader({ badge, headline, highlight, description,
             className="block"
           >
             {headline}{" "}
-            <span className="text-violet-600 relative">
+            <span className="text-brand relative">
               {highlight}
               <motion.span
                 initial={{ scaleX: 0 }}
                 whileInView={{ scaleX: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.5 }}
-                className="absolute -bottom-1 left-0 right-0 h-[3px] bg-violet-200 rounded-full origin-left block"
+                className="absolute -bottom-1 left-0 right-0 h-[3px] bg-violet-200 dark:bg-violet-700/60 rounded-full origin-left block"
               />
             </span>
           </motion.span>
@@ -58,7 +59,7 @@ export function AnimatedSectionHeader({ badge, headline, highlight, description,
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.3 }}
-        className={`text-slate-500 font-medium max-w-md text-sm ${centered ? "text-center" : "md:text-right"}`}
+        className={`text-muted-foreground font-medium max-w-md text-sm ${centered ? "text-center" : "md:text-right"}`}
       >
         {description}
       </motion.p>

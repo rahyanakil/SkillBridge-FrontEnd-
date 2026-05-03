@@ -1,8 +1,12 @@
 "use server";
 
-export const getAllCourse = async () => {
+export const getAllCourse = async (params?: { limit?: number; page?: number }) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/courses/`, {
+    const query = new URLSearchParams();
+    if (params?.limit) query.set("limit", String(params.limit));
+    if (params?.page) query.set("page", String(params.page));
+    const qs = query.toString();
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/courses/${qs ? `?${qs}` : ""}`, {
       method: "GET",
       next: { revalidate: 300 },
     });

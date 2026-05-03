@@ -35,6 +35,7 @@ import {
   updateUserBanStatus,
 } from "@/services/Dashboard/adminActions";
 import { getAllCategories } from "@/services/category/CategoryAction";
+import { BookingBarChart, DistributionPieChart } from "@/components/modules/dashboard/BookingChart";
 
 type Tab = "users" | "bookings" | "categories";
 
@@ -70,6 +71,10 @@ export default function AdminDashboard() {
   const [search, setSearch] = useState("");
   const [bookingSearch, setBookingSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  // Pagination
+  const [userPage, setUserPage] = useState(1);
+  const [bookingPage, setBookingPage] = useState(1);
+  const PAGE_SIZE = 10;
   const categoryForm = useForm<{ name: string; description: string }>();
 
   const load = useCallback(async () => {
@@ -91,17 +96,18 @@ export default function AdminDashboard() {
 
   useEffect(() => { load(); }, [load]);
 
-  const filteredUsers = useMemo(
-    () =>
-      users.filter(
-        (u) =>
-          u.name?.toLowerCase().includes(search.toLowerCase()) ||
-          u.email?.toLowerCase().includes(search.toLowerCase()),
-      ),
-    [users, search],
-  );
+  const filteredUsers = useMemo(() => {
+    setUserPage(1);
+    return users.filter(
+      (u) =>
+        u.name?.toLowerCase().includes(search.toLowerCase()) ||
+        u.email?.toLowerCase().includes(search.toLowerCase()),
+    );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [users, search]);
 
   const filteredBookings = useMemo(() => {
+    setBookingPage(1);
     let list = bookings;
     if (statusFilter !== "ALL") list = list.filter((b) => b.status === statusFilter);
     if (bookingSearch)
@@ -111,7 +117,14 @@ export default function AdminDashboard() {
           b.course?.title?.toLowerCase().includes(bookingSearch.toLowerCase()),
       );
     return list;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookings, statusFilter, bookingSearch]);
+
+  // Paginated slices
+  const pagedUsers    = filteredUsers.slice((userPage - 1) * PAGE_SIZE, userPage * PAGE_SIZE);
+  const totalUserPages = Math.ceil(filteredUsers.length / PAGE_SIZE);
+  const pagedBookings = filteredBookings.slice((bookingPage - 1) * PAGE_SIZE, bookingPage * PAGE_SIZE);
+  const totalBookingPages = Math.ceil(filteredBookings.length / PAGE_SIZE);
 
   const handleDelete = async (userId: string, name: string) => {
     if (!confirm(`Delete user "${name}"? This cannot be undone.`)) return;
@@ -161,19 +174,71 @@ export default function AdminDashboard() {
     { label: "Avg Rating",     val: stats?.avgRating ?? "—",                     icon: Star,      from: "from-rose-600",    to: "to-pink-500",     glow: "shadow-rose-500/25" },
   ];
 
-  const tabs: { key: Tab; label: string; icon: any; count?: number }[] = [
-    { key: "users",      label: "Users",      icon: Users,      count: filteredUsers.length },
-    { key: "bookings",   label: "Bookings",   icon: TrendingUp, count: filteredBookings.length },
-    { key: "categories", label: "Categories", icon: Folder,     count: categories.length },
+  const sidebarItems: { key: Tab; label: string; icon: any; count?: number }[] = [
+    { key: "users",      label: "Users",       icon: Users,      count: users.length },
+    { key: "bookings",   label: "Bookings",    icon: TrendingUp, count: bookings.length },
+    { key: "categories", label: "Categories",  icon: Folder,     count: categories.length },
   ];
 
-  const tabIndex = tabs.findIndex((t) => t.key === tab);
+  // Extra sidebar-only links
+  const extraItems = [
+    { label: "Analytics",  icon: TrendingUp },
+    { label: "Settings",   icon: Zap },
+  ];
 
   return (
     <div
-      className="min-h-screen p-6 md:p-8 space-y-8 max-w-7xl mx-auto"
+      className="min-h-screen flex"
       style={{ background: "linear-gradient(160deg, #0d0d1a 0%, #111827 50%, #0d0d1a 100%)" }}
     >
+      {/* ── SIDEBAR ── */}
+      <aside className="hidden lg:flex flex-col w-60 shrink-0 border-r border-white/8 pt-8 pb-6 px-4 space-y-1">
+        {/* Logo */}
+        <div className="flex items-center gap-2 px-3 mb-8">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center">
+            <Shield className="w-4 h-4 text-white" />
+          </div>
+          <span className="text-white font-black text-base italic">Admin</span>
+        </div>
+
+        <p className="text-white/30 text-[10px] font-black uppercase tracking-widest px-3 pb-1">Management</p>
+        {sidebarItems.map((item) => (
+          <button
+            key={item.key}
+            onClick={() => setTab(item.key)}
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold w-full text-left transition-all ${
+              tab === item.key
+                ? "bg-violet-600/20 text-violet-300 border border-violet-500/30"
+                : "text-white/50 hover:bg-white/5 hover:text-white/80"
+            }`}
+          >
+            <item.icon className="w-4 h-4 shrink-0" />
+            <span className="flex-1">{item.label}</span>
+            {item.count !== undefined && (
+              <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${tab === item.key ? "bg-violet-500/30 text-violet-300" : "bg-white/10 text-white/40"}`}>
+                {item.count}
+              </span>
+            )}
+          </button>
+        ))}
+
+        <div className="pt-4 mt-2 border-t border-white/8">
+          <p className="text-white/30 text-[10px] font-black uppercase tracking-widest px-3 pb-1">More</p>
+          {extraItems.map((item) => (
+            <div
+              key={item.label}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-white/30 cursor-not-allowed"
+            >
+              <item.icon className="w-4 h-4 shrink-0" />
+              <span>{item.label}</span>
+              <span className="ml-auto text-[9px] bg-white/10 text-white/30 px-1.5 py-0.5 rounded-full uppercase tracking-wide">Soon</span>
+            </div>
+          ))}
+        </div>
+      </aside>
+
+      {/* ── MAIN CONTENT ── */}
+      <div className="flex-1 p-6 md:p-8 space-y-8 min-w-0">
       {/* ── HEADER ── */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -231,43 +296,38 @@ export default function AdminDashboard() {
         ))}
       </motion.div>
 
-      {/* ── TAB NAVIGATION ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="relative flex gap-1 bg-white/5 border border-white/10 backdrop-blur-sm rounded-2xl p-1.5"
-        style={{ width: "fit-content" }}
-      >
-        {/* Animated pill indicator */}
-        <motion.div
-          className="absolute top-1.5 bottom-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 shadow-lg shadow-violet-500/30"
-          animate={{
-            left: `calc(${tabIndex} * (100% / ${tabs.length}) + 6px)`,
-            width: `calc(100% / ${tabs.length} - 12px)`,
-          }}
-          transition={{ type: "spring", stiffness: 400, damping: 35 }}
-        />
-        {tabs.map((t) => (
+      {/* ── CHARTS ── */}
+      {bookings.length > 0 && (
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="[&_.recharts-text]:fill-slate-200 [&_.recharts-cartesian-grid-horizontal_line]:stroke-white/10 [&_.recharts-cartesian-grid-vertical_line]:stroke-white/10">
+            <BookingBarChart bookings={bookings} title="All Bookings by Status" />
+          </div>
+          <DistributionPieChart
+            title="User Role Distribution"
+            data={[
+              { name: "Students", value: users.filter((u: any) => u.role === "STUDENT").length, color: "#8b5cf6" },
+              { name: "Tutors",   value: users.filter((u: any) => u.role === "TUTOR").length,   color: "#6366f1" },
+              { name: "Admins",   value: users.filter((u: any) => u.role === "ADMIN").length,   color: "#f43f5e" },
+            ].filter(d => d.value > 0)}
+          />
+        </div>
+      )}
+
+      {/* ── MOBILE TAB NAVIGATION (sidebar hidden on mobile) ── */}
+      <div className="flex lg:hidden gap-1 bg-white/5 border border-white/10 rounded-2xl p-1.5 w-fit">
+        {sidebarItems.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`relative z-10 flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm transition-colors duration-200 ${
-              tab === t.key ? "text-white" : "text-white/40 hover:text-white/70"
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-black text-xs transition-colors ${
+              tab === t.key ? "bg-violet-600 text-white" : "text-white/40 hover:text-white/70"
             }`}
           >
-            <t.icon className="w-4 h-4" />
+            <t.icon className="w-3.5 h-3.5" />
             {t.label}
-            {t.count !== undefined && (
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${
-                tab === t.key ? "bg-white/20 text-white" : "bg-white/10 text-white/40"
-              }`}>
-                {t.count}
-              </span>
-            )}
           </button>
         ))}
-      </motion.div>
+      </div>
 
       {/* ── CONTENT ── */}
       {loading ? (
@@ -324,14 +384,14 @@ export default function AdminDashboard() {
                   </thead>
                   <tbody>
                     <AnimatePresence>
-                      {filteredUsers.length === 0 ? (
+                      {pagedUsers.length === 0 ? (
                         <tr>
                           <td colSpan={4} className="text-center py-16 text-white/20 italic font-bold">
                             No users match your search.
                           </td>
                         </tr>
                       ) : (
-                        filteredUsers.map((user, i) => {
+                        pagedUsers.map((user, i) => {
                           const role = ROLE_CONFIG[user.role] ?? ROLE_CONFIG.STUDENT;
                           return (
                             <motion.tr
@@ -398,6 +458,32 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               </div>
+              {/* Users pagination */}
+              {totalUserPages > 1 && (
+                <div className="flex items-center justify-between px-6 py-4 border-t border-white/5">
+                  <span className="text-white/30 text-xs font-medium">
+                    Page {userPage} of {totalUserPages} · {filteredUsers.length} users
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => setUserPage((p) => Math.max(1, p - 1))}
+                      disabled={userPage === 1}
+                      className="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/5 text-white/50 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                    >← Prev</button>
+                    {Array.from({ length: totalUserPages }, (_, i) => i + 1).map((n) => (
+                      <button key={n} onClick={() => setUserPage(n)}
+                        className={`w-8 h-8 rounded-xl text-xs font-black transition-all ${userPage === n ? "bg-violet-600 text-white" : "bg-white/5 text-white/40 hover:bg-white/10 hover:text-white"}`}>
+                        {n}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => setUserPage((p) => Math.min(totalUserPages, p + 1))}
+                      disabled={userPage === totalUserPages}
+                      className="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/5 text-white/50 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                    >Next →</button>
+                  </div>
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -458,14 +544,14 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredBookings.length === 0 ? (
+                    {pagedBookings.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="text-center py-16 text-white/20 italic font-bold">
                           No bookings found.
                         </td>
                       </tr>
                     ) : (
-                      filteredBookings.map((booking, i) => {
+                      pagedBookings.map((booking, i) => {
                         const sc = STATUS_CONFIG[booking.status] ?? STATUS_CONFIG.PENDING;
                         return (
                           <motion.tr
@@ -537,6 +623,32 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               </div>
+              {/* Bookings pagination */}
+              {totalBookingPages > 1 && (
+                <div className="flex items-center justify-between px-6 py-4 border-t border-white/5">
+                  <span className="text-white/30 text-xs font-medium">
+                    Page {bookingPage} of {totalBookingPages} · {filteredBookings.length} bookings
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => setBookingPage((p) => Math.max(1, p - 1))}
+                      disabled={bookingPage === 1}
+                      className="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/5 text-white/50 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                    >← Prev</button>
+                    {Array.from({ length: totalBookingPages }, (_, i) => i + 1).map((n) => (
+                      <button key={n} onClick={() => setBookingPage(n)}
+                        className={`w-8 h-8 rounded-xl text-xs font-black transition-all ${bookingPage === n ? "bg-violet-600 text-white" : "bg-white/5 text-white/40 hover:bg-white/10 hover:text-white"}`}>
+                        {n}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => setBookingPage((p) => Math.min(totalBookingPages, p + 1))}
+                      disabled={bookingPage === totalBookingPages}
+                      className="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/5 text-white/50 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                    >Next →</button>
+                  </div>
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -645,6 +757,7 @@ export default function AdminDashboard() {
           )}
         </AnimatePresence>
       )}
+      </div>
     </div>
   );
 }

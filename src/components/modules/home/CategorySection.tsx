@@ -7,10 +7,10 @@ export default async function CategorySection() {
   const categories = await getAllCategories();
 
   return (
-    <section className="py-28 bg-white overflow-hidden relative">
+    <section className="py-28 bg-white dark:bg-slate-950 overflow-hidden relative">
       {/* Decorative background blobs */}
-      <div className="absolute top-0 right-0 w-150 h-150 bg-violet-50 rounded-full blur-3xl opacity-60 -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-100 h-100 bg-indigo-50 rounded-full blur-3xl opacity-60 translate-y-1/2 -translate-x-1/3 pointer-events-none" />
+      <div className="absolute top-0 right-0 w-150 h-150 bg-violet-50 dark:bg-violet-900/20 rounded-full blur-3xl opacity-60 -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-100 h-100 bg-indigo-50 dark:bg-indigo-900/20 rounded-full blur-3xl opacity-60 translate-y-1/2 -translate-x-1/3 pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10">
         <AnimatedSectionHeader

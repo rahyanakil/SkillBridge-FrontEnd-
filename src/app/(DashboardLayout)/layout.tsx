@@ -25,18 +25,18 @@ export default async function DashboardLayout({
     <SidebarProvider>
       <AppSidebar userRole={role} user={user} />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-3 border-b border-slate-100 bg-white/80 backdrop-blur-md px-6 sticky top-0 z-40">
-          <SidebarTrigger className="text-slate-500 hover:text-violet-600 transition-colors" />
-          <div className="h-5 w-px bg-slate-200 mx-1" />
+        <header className="flex h-16 shrink-0 items-center gap-3 border-b border-border bg-background/80 backdrop-blur-md px-6 sticky top-0 z-40">
+          <SidebarTrigger className="text-muted-foreground hover:text-violet-600 dark:hover:text-violet-400 transition-colors" />
+          <div className="h-5 w-px bg-border mx-1" />
           <div className={`flex items-center gap-2 bg-gradient-to-r ${roleColors[role]} px-3 py-1 rounded-full`}>
             <span className="text-white text-[10px] font-black uppercase tracking-widest">{role} Portal</span>
           </div>
           <div className="ml-auto flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-slate-400 font-medium hidden md:block">Live</span>
+            <span className="text-xs text-muted-foreground font-medium hidden md:block">Live</span>
           </div>
         </header>
-        <main className="flex-1 bg-slate-50/50 min-h-[calc(100vh-4rem)]">
+        <main className="flex-1 bg-muted/30 min-h-[calc(100vh-4rem)]">
           {role === "ADMIN" && admin}
           {role === "TUTOR" && tutor}
           {role === "STUDENT" && student}

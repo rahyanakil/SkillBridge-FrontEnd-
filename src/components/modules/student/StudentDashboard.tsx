@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { BookingBarChart } from "@/components/modules/dashboard/BookingChart";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   cancelBooking, createPaymentCheckout, getClassroomLink,
@@ -115,7 +116,7 @@ export default function StudentDashboard({ initialBookings, initialCompleted, in
       </motion.div>
 
       {/* Stats */}
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4" suppressHydrationWarning>
         {stats.map((s, i) => (
           <motion.div key={s.title} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
             <div className="group relative bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-xl hover:shadow-violet-50 transition-all duration-300 overflow-hidden cursor-default">
@@ -129,6 +130,11 @@ export default function StudentDashboard({ initialBookings, initialCompleted, in
           </motion.div>
         ))}
       </div>
+
+      {/* Booking status chart */}
+      {bookings.length > 0 && (
+        <BookingBarChart bookings={bookings} title="My Bookings by Status" />
+      )}
 
       {/* Main content */}
       <div className="grid gap-6 lg:grid-cols-3">

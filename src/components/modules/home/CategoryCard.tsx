@@ -33,7 +33,7 @@ export default function CategoryCard({
       whileHover={{ y: -8 }}
     >
       <Link href={`/courses?category=${category.id}`} className="block h-full">
-        <div className="group relative bg-white p-7 rounded-[2rem] border border-slate-100 shadow-lg shadow-slate-100/60 hover:shadow-2xl hover:shadow-violet-100/60 transition-all duration-500 flex flex-col items-center text-center overflow-hidden h-full">
+        <div className="group relative bg-card p-7 rounded-[2rem] border border-border shadow-lg shadow-black/5 dark:shadow-none hover:shadow-2xl hover:shadow-violet-100/40 dark:hover:shadow-violet-900/20 transition-all duration-500 flex flex-col items-center text-center overflow-hidden h-full">
           {/* Animated background gradient on hover */}
           <div
             className={`absolute inset-0 bg-linear-to-br ${gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500 rounded-[2rem]`}
@@ -53,20 +53,20 @@ export default function CategoryCard({
 
           {/* Content */}
           <div className="relative z-10 flex flex-col flex-1 w-full">
-            <h3 className="text-lg font-black text-slate-900 mb-2 group-hover:text-violet-600 transition-colors uppercase tracking-tight">
+            <h3 className="text-lg font-black text-foreground mb-2 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors uppercase tracking-tight">
               {category.name}
             </h3>
-            <p className="text-slate-500 text-sm font-medium leading-relaxed mb-5 flex-1">
+            <p className="text-muted-foreground text-sm font-medium leading-relaxed mb-5 flex-1">
               Explore expert-led courses in {category.name} and master in-demand
               skills.
             </p>
 
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-400">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground">
                 <BookOpen className="w-3.5 h-3.5" />
                 {courseCount} {courseCount === 1 ? "course" : "courses"}
               </div>
-              <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-violet-50 group-hover:bg-violet-600 transition-colors duration-300">
+              <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-violet-50 dark:bg-violet-900/30 group-hover:bg-violet-600 transition-colors duration-300">
                 <ArrowUpRight className="w-4 h-4 text-violet-400 group-hover:text-white transition-colors" />
               </div>
             </div>

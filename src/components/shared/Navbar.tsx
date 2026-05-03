@@ -14,15 +14,18 @@ import { UserLogOut } from "@/services/auth";
 import NotificationBell from "@/components/shared/NotificationBell";
 import {
   BookOpen,
+  BookMarked,
   ChevronDown,
   LayoutDashboard,
   LogOut,
   Menu,
   Settings,
   User as UserIcon,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useEffect, useState } from "react";
 
 interface User {
@@ -36,8 +39,9 @@ interface NavbarProps {
 
 const navItems = [
   { href: "/", label: "Home" },
-  { href: "/courses", label: "Our Courses" },
-  { href: "/category", label: "Category" },
+  { href: "/courses", label: "Courses" },
+  { href: "/category", label: "Categories" },
+  { href: "/about-us", label: "About" },
 ];
 
 export default function Navbar({ initialUser }: NavbarProps) {
@@ -46,10 +50,7 @@ export default function Navbar({ initialUser }: NavbarProps) {
   const pathname = usePathname();
   const router = useRouter();
 
-  // Sync when layout re-renders after login/logout + router.refresh()
-  useEffect(() => {
-    setUser(initialUser);
-  }, [initialUser]);
+  useEffect(() => { setUser(initialUser); }, [initialUser]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -58,7 +59,9 @@ export default function Navbar({ initialUser }: NavbarProps) {
   }, []);
 
   const isActive = (path: string) =>
-    pathname === path ? "text-violet-600 font-bold" : "text-muted-foreground";
+    pathname === path
+      ? "text-violet-600 dark:text-violet-400 font-bold"
+      : "text-muted-foreground";
 
   const handleLogout = async () => {
     try {
@@ -74,12 +77,18 @@ export default function Navbar({ initialUser }: NavbarProps) {
   };
 
   return (
-    <nav className={`w-full sticky top-0 z-50 transition-all duration-300 ${scrolled ? "border-b border-slate-100/80 bg-white/90 backdrop-blur-xl shadow-sm shadow-slate-100" : "border-b border-transparent bg-white/60 backdrop-blur-md"}`}>
+    <nav
+      className={`w-full sticky top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "border-b border-border bg-background/90 backdrop-blur-xl shadow-sm"
+          : "border-b border-transparent bg-background/60 backdrop-blur-md"
+      }`}
+    >
       <div className="container mx-auto flex items-center justify-between py-4 px-4 md:px-6">
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 text-2xl text-violet-600 font-black tracking-tighter"
+          className="flex items-center gap-2 text-2xl text-violet-600 dark:text-violet-400 font-black tracking-tighter"
         >
           <BookOpen className="w-8 h-8" />
           <span>SkillBridge</span>
@@ -91,7 +100,7 @@ export default function Navbar({ initialUser }: NavbarProps) {
             {navItems.map((item) => (
               <Link
                 key={item.href}
-                className={`text-sm transition-colors hover:text-violet-600 ${isActive(item.href)}`}
+                className={`text-sm transition-colors hover:text-violet-600 dark:hover:text-violet-400 ${isActive(item.href)}`}
                 href={item.href}
               >
                 {item.label}
@@ -99,11 +108,25 @@ export default function Navbar({ initialUser }: NavbarProps) {
             ))}
           </div>
 
-          <div className="h-6 w-px bg-gray-200 mx-2" />
+          <div className="h-6 w-px bg-border mx-2" />
 
-          {/* Conditional Auth UI */}
+          <ThemeToggle />
+
           {user ? (
             <div className="flex items-center gap-3">
+              <Link
+                href="/courses"
+                className={`text-sm transition-colors hover:text-violet-600 dark:hover:text-violet-400 ${isActive("/courses")}`}
+              >
+                Browse
+              </Link>
+              <Link
+                href="/dashboard"
+                className={`text-sm transition-colors hover:text-violet-600 dark:hover:text-violet-400 ${isActive("/dashboard")}`}
+              >
+                My Bookings
+              </Link>
+              <div className="h-5 w-px bg-border" />
               <NotificationBell />
               <UserMenu user={user} onLogout={handleLogout} />
             </div>
@@ -112,13 +135,13 @@ export default function Navbar({ initialUser }: NavbarProps) {
               <Link href="/login">
                 <Button
                   variant="ghost"
-                  className="rounded-full px-6 text-gray-600 font-bold hover:text-violet-600"
+                  className="rounded-full px-6 text-muted-foreground font-bold hover:text-violet-600 dark:hover:text-violet-400"
                 >
                   Log In
                 </Button>
               </Link>
               <Link href="/register">
-                <Button className="rounded-full px-8 bg-violet-600 hover:bg-violet-700 shadow-lg shadow-violet-100 font-bold transition-transform active:scale-95">
+                <Button className="rounded-full px-8 bg-violet-600 hover:bg-violet-700 text-white shadow-lg shadow-violet-500/25 font-bold transition-transform active:scale-95">
                   Sign Up
                 </Button>
               </Link>
@@ -126,7 +149,7 @@ export default function Navbar({ initialUser }: NavbarProps) {
           )}
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile */}
         <div className="md:hidden flex items-center gap-3">
           {user && <UserMenu user={user} onLogout={handleLogout} />}
 
@@ -135,20 +158,14 @@ export default function Navbar({ initialUser }: NavbarProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-xl border bg-gray-50/50"
+                className="rounded-xl border border-border bg-muted/50"
               >
-                <Menu className="h-6 w-6 text-gray-700" />
+                <Menu className="h-6 w-6 text-foreground" />
               </Button>
             </SheetTrigger>
-            <SheetContent
-              side="right"
-              className="w-75 sm:w-87.5 rounded-l-[2rem]"
-            >
+            <SheetContent side="right" className="w-75 sm:w-87.5 rounded-l-[2rem]">
               <div className="flex flex-col gap-6 mt-12 px-2">
-                <Link
-                  href="/"
-                  className="text-3xl text-violet-600 font-black mb-4"
-                >
+                <Link href="/" className="text-3xl text-violet-600 dark:text-violet-400 font-black mb-4">
                   SkillBridge
                 </Link>
                 <div className="space-y-2">
@@ -157,8 +174,8 @@ export default function Navbar({ initialUser }: NavbarProps) {
                       key={item.href}
                       className={`block text-xl font-bold py-3 px-4 rounded-2xl transition-all ${
                         pathname === item.href
-                          ? "bg-violet-50 text-violet-600"
-                          : "text-gray-500 hover:bg-gray-50"
+                          ? "bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400"
+                          : "text-muted-foreground hover:bg-muted"
                       }`}
                       href={item.href}
                     >
@@ -166,10 +183,14 @@ export default function Navbar({ initialUser }: NavbarProps) {
                     </Link>
                   ))}
                 </div>
+                <div className="flex items-center gap-3 px-1">
+                  <span className="text-sm text-muted-foreground font-medium">Theme</span>
+                  <ThemeToggle />
+                </div>
                 {!user && (
-                  <div className="flex flex-col gap-3 mt-6">
+                  <div className="flex flex-col gap-3 mt-4">
                     <Link href="/login">
-                      <Button className="w-full rounded-2xl bg-violet-600 py-7 text-lg font-bold shadow-xl shadow-violet-100">
+                      <Button className="w-full rounded-2xl bg-violet-600 hover:bg-violet-700 py-7 text-lg font-bold shadow-xl shadow-violet-500/25">
                         Log In Now
                       </Button>
                     </Link>
@@ -192,12 +213,7 @@ export default function Navbar({ initialUser }: NavbarProps) {
   );
 }
 
-/**
- * ইউজার মেনু কম্পোনেন্ট - যা রোল অনুযায়ী ড্যাশবোর্ড কানেক্ট করে
- */
 function UserMenu({ user, onLogout }: { user: User; onLogout: () => void }) {
-  // রোল অনুযায়ী ডাইনামিক পাথ (student -> /dashboard/student)
-  // const dashboardPath = `/dashboard/${user.role?.toLowerCase()}`;
   const dashboardPath = "/dashboard";
 
   return (
@@ -205,88 +221,68 @@ function UserMenu({ user, onLogout }: { user: User; onLogout: () => void }) {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="rounded-full gap-2 border-violet-100 bg-violet-50/50 hover:bg-violet-100 transition-all px-4 py-6 shadow-sm group"
+          className="rounded-full gap-2 border-violet-200 dark:border-violet-800/50 bg-violet-50/50 dark:bg-violet-900/20 hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-all px-4 py-6 shadow-sm group"
         >
-          <div className="w-8 h-8 rounded-full bg-linear-to-tr from-violet-600 to-indigo-500 flex items-center justify-center text-xs text-white font-bold shadow-md">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-violet-600 to-indigo-500 flex items-center justify-center text-xs text-white font-bold shadow-md">
             {user.name.charAt(0).toUpperCase()}
           </div>
           <div className="flex flex-col items-start leading-tight">
-            <span className="font-bold text-gray-900 text-sm">
+            <span className="font-bold text-foreground text-sm">
               {user.name.split(" ")[0]}
             </span>
-            <span className="text-[10px] text-violet-600 font-black uppercase tracking-tighter">
+            <span className="text-[10px] text-violet-600 dark:text-violet-400 font-black uppercase tracking-tighter">
               {user.role}
             </span>
           </div>
-          <ChevronDown className="w-4 h-4 text-gray-400 group-data-[state=open]:rotate-180 transition-transform" />
+          <ChevronDown className="w-4 h-4 text-muted-foreground group-data-[state=open]:rotate-180 transition-transform" />
         </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
         align="end"
-        className="w-64 p-2 rounded-[1.5rem] shadow-2xl border-gray-100 bg-white/95 backdrop-blur-xl mt-2"
+        className="w-64 p-2 rounded-[1.5rem] shadow-2xl border-border bg-popover/95 backdrop-blur-xl mt-2"
       >
         <DropdownMenuLabel className="px-3 py-4">
-          <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1">
+          <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] mb-1">
             Account Status
           </p>
-          <p className="text-base font-black text-gray-900 truncate">
+          <p className="text-base font-black text-foreground truncate">
             {user.name}
           </p>
         </DropdownMenuLabel>
 
-        <DropdownMenuSeparator className="bg-gray-100 mx-2" />
+        <DropdownMenuSeparator className="bg-border mx-2" />
 
         <div className="p-1 space-y-1">
-          {/* প্রোফাইল অপশন */}
-          <DropdownMenuItem asChild>
-            <Link
-              href="/profile"
-              className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-violet-50 text-gray-700 transition-all group"
-            >
-              <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center group-hover:bg-white shadow-sm transition-colors">
-                <UserIcon className="w-4 h-4 text-violet-600" />
-              </div>
-              <span className="font-bold">My Profile</span>
-            </Link>
-          </DropdownMenuItem>
-
-          <DropdownMenuItem asChild>
-            <Link
-              href="/profile/edit"
-              className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-violet-50 text-gray-700 transition-all group"
-            >
-              <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center group-hover:bg-white shadow-sm transition-colors">
-                <Settings className="w-4 h-4 text-violet-600" />
-              </div>
-              <span className="font-bold">Edit Profile</span>
-            </Link>
-          </DropdownMenuItem>
-
-          {/* ডাইনামিক ড্যাশবোর্ড লিঙ্ক (Student/Tutor/Admin) */}
-          <DropdownMenuItem asChild>
-            <Link
-              href={dashboardPath}
-              className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-violet-50 text-gray-700 transition-all group"
-            >
-              <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center group-hover:bg-white shadow-sm transition-colors">
-                <LayoutDashboard className="w-4 h-4 text-violet-600" />
-              </div>
-              <span className="font-bold capitalize">
-                {user.role.toLowerCase()} Dashboard
-              </span>
-            </Link>
-          </DropdownMenuItem>
+          {[
+            { href: "/profile",       icon: UserIcon,        label: "My Profile" },
+            { href: "/profile/edit",  icon: Settings,        label: "Edit Profile" },
+            { href: dashboardPath,    icon: LayoutDashboard, label: `${user.role.charAt(0) + user.role.slice(1).toLowerCase()} Dashboard` },
+            { href: "/dashboard",     icon: BookMarked,      label: "My Bookings" },
+            { href: "/courses",       icon: Users,           label: "Browse Courses" },
+          ].map(({ href, icon: Icon, label }) => (
+            <DropdownMenuItem key={href} asChild>
+              <Link
+                href={href}
+                className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-muted text-foreground transition-all group"
+              >
+                <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center group-hover:bg-background shadow-sm transition-colors">
+                  <Icon className="w-4 h-4 text-violet-600 dark:text-violet-400" />
+                </div>
+                <span className="font-bold">{label}</span>
+              </Link>
+            </DropdownMenuItem>
+          ))}
         </div>
 
-        <DropdownMenuSeparator className="bg-gray-100 mx-2" />
+        <DropdownMenuSeparator className="bg-border mx-2" />
 
         <div className="p-1">
           <DropdownMenuItem
             onClick={onLogout}
-            className="flex items-center gap-3 p-3 rounded-xl cursor-pointer text-red-500 focus:bg-red-50 focus:text-red-600 font-bold transition-all"
+            className="flex items-center gap-3 p-3 rounded-xl cursor-pointer text-red-500 focus:bg-red-50 dark:focus:bg-red-950/40 focus:text-red-600 font-bold transition-all"
           >
-            <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950/40 flex items-center justify-center">
               <LogOut className="w-4 h-4" />
             </div>
             Logout Session

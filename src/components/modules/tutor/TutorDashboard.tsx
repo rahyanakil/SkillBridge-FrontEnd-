@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { BookingBarChart, DistributionPieChart } from "@/components/modules/dashboard/BookingChart";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   createOrUpdateTutorProfile, createTutorCourse, deleteTutorCourse,
@@ -211,6 +212,21 @@ export default function TutorDashboard({ initialBookings, initialEarnings, initi
           </FormPanel>
         )}
       </AnimatePresence>
+
+      {/* Charts */}
+      {bookings.length > 0 && (
+        <div className="grid gap-4 md:grid-cols-2">
+          <BookingBarChart bookings={bookings} title="Booking Requests by Status" />
+          <DistributionPieChart
+            title="Payment Status"
+            data={[
+              { name: "Paid", value: bookings.filter((b: any) => b.paymentStatus === "PAID").length, color: "#10b981" },
+              { name: "Unpaid", value: bookings.filter((b: any) => b.paymentStatus === "UNPAID").length, color: "#f59e0b" },
+              { name: "Refunded", value: bookings.filter((b: any) => b.paymentStatus === "REFUNDED").length, color: "#f43f5e" },
+            ].filter(d => d.value > 0)}
+          />
+        </div>
+      )}
 
       {/* Main grid */}
       <div className="grid gap-6 lg:grid-cols-3">

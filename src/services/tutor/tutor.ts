@@ -2,9 +2,13 @@
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-export const getAllPublicTutors = async () => {
+export const getAllPublicTutors = async (params?: { limit?: number; page?: number }) => {
   try {
-    const res = await fetch(`${BASE_URL}/tutors`, {
+    const query = new URLSearchParams();
+    if (params?.limit) query.set("limit", String(params.limit));
+    if (params?.page) query.set("page", String(params.page));
+    const qs = query.toString();
+    const res = await fetch(`${BASE_URL}/tutors${qs ? `?${qs}` : ""}`, {
       method: "GET",
       next: { revalidate: 60, tags: ["tutors"] },
     });
