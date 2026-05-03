@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -41,6 +41,23 @@ export const LoginForm = () => {
   const searchParams = useSearchParams();
   const redirectPath = searchParams.get("redirect") || "/";
   const [showPassword, setShowPassword] = useState(false);
+
+  // Show OAuth error as a toast on mount
+  useEffect(() => {
+    const oauthError = searchParams.get("error");
+    if (!oauthError) return;
+    const messages: Record<string, string> = {
+      google_denied: "Google sign-in was cancelled.",
+      github_denied: "GitHub sign-in was cancelled.",
+      oauth_not_configured: "OAuth credentials are not configured.",
+      base_url_not_configured: "Backend URL is not configured.",
+      token_exchange_failed: "Could not exchange OAuth code. Check your client secret.",
+      no_email: "No email found on your OAuth account. Use email login instead.",
+      backend_auth_failed: "Backend authentication failed. Is the server running?",
+      server_error: "An unexpected server error occurred. Check the terminal logs.",
+    };
+    toast.error(messages[oauthError] ?? "Sign-in failed. Please try again.");
+  }, [searchParams]);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
@@ -349,14 +366,11 @@ export const LoginForm = () => {
               type="button"
               onClick={() => {
                 const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-                if (!clientId) return;
-                const redirectUri = encodeURIComponent(
-                  window.location.origin + "/api/auth/google",
-                );
-                window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20email%20profile&access_type=offline`;
+                if (!clientId) { toast.error("Google login is not configured."); return; }
+                const redirectUri = encodeURIComponent(window.location.origin + "/api/auth/google");
+                window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20email%20profile`;
               }}
-              disabled={!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
-              className="flex items-center justify-center gap-2.5 h-[46px] rounded-2xl border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              className="flex items-center justify-center gap-2.5 h-[46px] rounded-2xl border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all"
             >
               {/* Google logo */}
               <svg
@@ -387,9 +401,12 @@ export const LoginForm = () => {
             {/* GitHub */}
             <button
               type="button"
-              onClick={() =>
-                (window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID ?? "YOUR_GITHUB_CLIENT_ID"}&scope=user:email&redirect_uri=${encodeURIComponent(window.location.origin + "/api/auth/github")}`)
-              }
+              onClick={() => {
+                const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+                if (!clientId) { toast.error("GitHub login is not configured."); return; }
+                const redirectUri = encodeURIComponent(window.location.origin + "/api/auth/github");
+                window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=user:email&redirect_uri=${redirectUri}`;
+              }}
               className="flex items-center justify-center gap-2.5 h-[46px] rounded-2xl border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all"
             >
               {/* GitHub logo */}

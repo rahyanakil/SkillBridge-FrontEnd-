@@ -10,7 +10,7 @@ const CommonLayout = async ({ children }: { children: React.ReactNode }) => {
       <Navbar initialUser={user} />
       <div>{children}</div>
       <Footer />
-      {user && <AIChatbot />}
+      <AIChatbot isLoggedIn={!!user} />
     </div>
   );
 };

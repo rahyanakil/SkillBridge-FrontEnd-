@@ -325,12 +325,11 @@ export const RegisterForm = () => {
               type="button"
               onClick={() => {
                 const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-                if (!clientId) return;
+                if (!clientId) { toast.error("Google login is not configured."); return; }
                 const redirectUri = encodeURIComponent(window.location.origin + "/api/auth/google");
-                window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20email%20profile&access_type=offline`;
+                window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20email%20profile`;
               }}
-              disabled={!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
-              className="flex items-center justify-center gap-2.5 h-[46px] rounded-2xl border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              className="flex items-center justify-center gap-2.5 h-[46px] rounded-2xl border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -342,7 +341,12 @@ export const RegisterForm = () => {
             </button>
             <button
               type="button"
-              onClick={() => window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID ?? "YOUR_GITHUB_CLIENT_ID"}&scope=user:email&redirect_uri=${encodeURIComponent(window.location.origin + "/api/auth/github")}`}
+              onClick={() => {
+                const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+                if (!clientId) { toast.error("GitHub login is not configured."); return; }
+                const redirectUri = encodeURIComponent(window.location.origin + "/api/auth/github");
+                window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=user:email&redirect_uri=${redirectUri}`;
+              }}
               className="flex items-center justify-center gap-2.5 h-[46px] rounded-2xl border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all"
             >
               <svg className="w-4 h-4 text-slate-800" fill="currentColor" viewBox="0 0 24 24">
