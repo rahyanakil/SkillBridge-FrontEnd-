@@ -46,17 +46,22 @@ export const LoginForm = () => {
   useEffect(() => {
     const oauthError = searchParams.get("error");
     if (!oauthError) return;
+    const detail = searchParams.get("detail");
     const messages: Record<string, string> = {
       google_denied: "Google sign-in was cancelled.",
       github_denied: "GitHub sign-in was cancelled.",
-      oauth_not_configured: "OAuth credentials are not configured.",
-      base_url_not_configured: "Backend URL is not configured.",
-      token_exchange_failed: "Could not exchange OAuth code. Check your client secret.",
-      no_email: "No email found on your OAuth account. Use email login instead.",
-      backend_auth_failed: "Backend authentication failed. Is the server running?",
-      server_error: "An unexpected server error occurred. Check the terminal logs.",
+      google_not_configured: "Google OAuth credentials are not configured in Vercel.",
+      github_not_configured: "GitHub OAuth credentials are not configured in Vercel.",
+      base_url_missing: "NEXT_PUBLIC_BASE_URL is not set in Vercel environment variables.",
+      google_token_failed: "Google token exchange failed. Check your Client Secret.",
+      github_token_failed: "GitHub token exchange failed. Check your Client Secret.",
+      google_no_email: "No email returned from Google.",
+      github_no_email: "No email returned from GitHub.",
+      backend_auth_failed: detail ? `Backend error: ${detail}` : "Backend auth failed. Check Vercel backend logs.",
+      backend_invalid_json: "Backend returned invalid response.",
+      server_error: detail ? `Server error: ${detail}` : "Unexpected server error.",
     };
-    toast.error(messages[oauthError] ?? "Sign-in failed. Please try again.");
+    toast.error(messages[oauthError] ?? `Sign-in failed: ${oauthError}`);
   }, [searchParams]);
 
   const form = useForm<LoginFormValues>({

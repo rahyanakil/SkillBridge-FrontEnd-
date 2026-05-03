@@ -9,8 +9,12 @@ const COOKIE_OPTIONS = {
 };
 
 function fail(origin: string, reason: string, detail?: unknown) {
-  console.error(`[github-oauth] ${reason}`, detail ?? "");
-  return NextResponse.redirect(new URL(`/login?error=${reason}`, origin));
+  const msg = detail ? String(JSON.stringify(detail)).slice(0, 300) : "";
+  console.error(`[github-oauth] FAIL — ${reason}:`, detail);
+  const url = new URL("/login", origin);
+  url.searchParams.set("error", reason);
+  if (msg) url.searchParams.set("detail", msg);
+  return NextResponse.redirect(url);
 }
 
 export async function GET(req: NextRequest) {
@@ -22,13 +26,13 @@ export async function GET(req: NextRequest) {
 
   const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
   const clientSecret = process.env.GITHUB_CLIENT_SECRET;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL ?? "").replace(/\/$/, "");
 
-  if (!clientId || !clientSecret) return fail(origin, "oauth_not_configured");
-  if (!baseUrl) return fail(origin, "base_url_not_configured");
+  if (!clientId || !clientSecret) return fail(origin, "github_not_configured");
+  if (!baseUrl) return fail(origin, "base_url_missing");
 
   try {
-    // 1 — Exchange code for access token
+    // 1 — Exchange code for GitHub access token
     const tokenRes = await fetch("https://github.com/login/oauth/access_token", {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
@@ -40,34 +44,30 @@ export async function GET(req: NextRequest) {
       }),
     });
     const tokenData = await tokenRes.json();
-    console.log("[github-oauth] token response status:", tokenRes.status);
-
-    if (!tokenData.access_token) {
-      return fail(origin, "token_exchange_failed", tokenData);
-    }
+    if (!tokenData.access_token) return fail(origin, "github_token_failed", tokenData);
 
     const headers = {
       Authorization: `Bearer ${tokenData.access_token}`,
       Accept: "application/vnd.github+json",
     };
 
-    // 2 — Fetch user profile
+    // 2 — Get GitHub profile
     const profileRes = await fetch("https://api.github.com/user", { headers });
     const profile = await profileRes.json();
 
-    // GitHub users may have a private email — fetch the verified primary one
     let email = profile.email as string | null;
     if (!email) {
       const emailsRes = await fetch("https://api.github.com/user/emails", { headers });
       const emails: { email: string; primary: boolean; verified: boolean }[] = await emailsRes.json();
       email = emails.find((e) => e.primary && e.verified)?.email ?? null;
     }
-    console.log("[github-oauth] resolved email:", email);
-
-    if (!email) return fail(origin, "no_email", profile);
+    if (!email) return fail(origin, "github_no_email", profile);
 
     // 3 — Create / find user on backend
-    const backendRes = await fetch(`${baseUrl}/auth/github`, {
+    const backendUrl = `${baseUrl}/auth/github`;
+    console.log("[github-oauth] calling backend:", backendUrl);
+
+    const backendRes = await fetch(backendUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -75,12 +75,17 @@ export async function GET(req: NextRequest) {
         name: profile.name ?? profile.login ?? email.split("@")[0],
         avatar: profile.avatar_url ?? null,
       }),
+      cache: "no-store",
     });
-    const result = await backendRes.json();
-    console.log("[github-oauth] backend status:", backendRes.status, "success:", result.success);
+
+    const rawText = await backendRes.text();
+    console.log("[github-oauth] backend raw response:", backendRes.status, rawText);
+
+    let result: any;
+    try { result = JSON.parse(rawText); } catch { return fail(origin, "backend_invalid_json", rawText); }
 
     if (!result.success || !result.data?.token) {
-      return fail(origin, "backend_auth_failed", result);
+      return fail(origin, "backend_auth_failed", { status: backendRes.status, body: result });
     }
 
     // 4 — Set JWT cookie and redirect home
