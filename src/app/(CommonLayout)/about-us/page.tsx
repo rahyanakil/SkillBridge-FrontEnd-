@@ -44,7 +44,7 @@ const fadeUp = {
   visible: (i = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
@@ -154,7 +154,7 @@ export default function AboutUs() {
           <motion.h1
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] as const }}
             className="text-5xl md:text-7xl lg:text-8xl font-black text-slate-900 dark:text-white tracking-tighter leading-[0.95] mb-8"
           >
             Bridging Potential{" "}
@@ -237,7 +237,7 @@ export default function AboutUs() {
             initial={{ opacity: 0, x: -60 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as const }}
             className="relative"
           >
             <div className="relative w-full aspect-square max-w-lg mx-auto">
@@ -296,7 +296,7 @@ export default function AboutUs() {
             initial={{ opacity: 0, x: 60 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as const }}
             className="space-y-8"
           >
             <div>
@@ -453,7 +453,7 @@ export default function AboutUs() {
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as const }}
           className="relative max-w-5xl mx-auto rounded-[3rem] overflow-hidden"
         >
           {/* Background */}
