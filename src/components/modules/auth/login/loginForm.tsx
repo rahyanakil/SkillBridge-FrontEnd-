@@ -67,7 +67,10 @@ export const LoginForm = () => {
       {/* ── LEFT PANEL ── */}
       <div
         className="hidden lg:flex flex-col justify-between p-14 relative overflow-hidden"
-        style={{ background: "linear-gradient(145deg, #0f0c29 0%, #302b63 50%, #24243e 100%)" }}
+        style={{
+          background:
+            "linear-gradient(145deg, #0f0c29 0%, #302b63 50%, #24243e 100%)",
+        }}
       >
         {/* Animated orbs */}
         <motion.div
@@ -84,7 +87,8 @@ export const LoginForm = () => {
         <div
           className="absolute inset-0 opacity-[0.04] pointer-events-none"
           style={{
-            backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
+            backgroundImage:
+              "radial-gradient(circle, white 1px, transparent 1px)",
             backgroundSize: "32px 32px",
           }}
         />
@@ -99,7 +103,9 @@ export const LoginForm = () => {
           <div className="w-11 h-11 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20 shadow-lg">
             <BookOpen className="w-6 h-6 text-white" />
           </div>
-          <span className="text-2xl font-black text-white tracking-tight">SkillBridge</span>
+          <span className="text-2xl font-black text-white tracking-tight">
+            SkillBridge
+          </span>
         </motion.div>
 
         {/* Center content */}
@@ -122,7 +128,8 @@ export const LoginForm = () => {
               </span>
             </h2>
             <p className="text-white/40 font-medium leading-relaxed text-base max-w-sm">
-              Access your personalized courses, connect with expert tutors, and track your progress.
+              Access your personalized courses, connect with expert tutors, and
+              track your progress.
             </p>
           </div>
 
@@ -135,11 +142,15 @@ export const LoginForm = () => {
                 transition={{ delay: 0.5 + i * 0.12 }}
                 className="flex items-center gap-3"
               >
-                <div className="w-10 h-10 rounded-xl bg-white/8 border border-white/10 flex items-center justify-center shrink-0 backdrop-blur-sm"
-                     style={{ background: "rgba(255,255,255,0.06)" }}>
+                <div
+                  className="w-10 h-10 rounded-xl bg-white/8 border border-white/10 flex items-center justify-center shrink-0 backdrop-blur-sm"
+                  style={{ background: "rgba(255,255,255,0.06)" }}
+                >
                   <f.icon className="w-5 h-5 text-violet-300" />
                 </div>
-                <span className="text-white/60 font-medium text-sm">{f.text}</span>
+                <span className="text-white/60 font-medium text-sm">
+                  {f.text}
+                </span>
               </motion.div>
             ))}
           </div>
@@ -153,7 +164,8 @@ export const LoginForm = () => {
           className="relative z-10 border-t border-white/10 pt-8"
         >
           <p className="text-white/25 text-xs font-medium italic leading-relaxed">
-            &ldquo;The more that you learn, the more places you&apos;ll go.&rdquo;
+            &ldquo;The more that you learn, the more places you&apos;ll
+            go.&rdquo;
           </p>
           <p className="text-white/20 text-xs font-black mt-1">— Dr. Seuss</p>
         </motion.div>
@@ -170,12 +182,18 @@ export const LoginForm = () => {
           {/* Mobile logo */}
           <div className="flex items-center gap-2 mb-10 lg:hidden">
             <BookOpen className="w-7 h-7 text-violet-600" />
-            <span className="text-xl font-black text-violet-600">SkillBridge</span>
+            <span className="text-xl font-black text-violet-600">
+              SkillBridge
+            </span>
           </div>
 
           <div className="mb-6">
-            <h1 className="text-4xl font-black text-slate-900 tracking-tight mb-2">Sign in</h1>
-            <p className="text-slate-400 font-medium text-sm">Enter your credentials to continue</p>
+            <h1 className="text-4xl font-black text-slate-900 tracking-tight mb-2">
+              Sign in
+            </h1>
+            <p className="text-slate-400 font-medium text-sm">
+              Enter your credentials to continue
+            </p>
           </div>
 
           {/* Demo credentials */}
@@ -192,19 +210,27 @@ export const LoginForm = () => {
                 }}
                 className="flex flex-col items-start px-3 py-2.5 rounded-xl border-2 border-dashed border-slate-200 hover:border-violet-400 hover:bg-violet-50 transition-all text-left group"
               >
-                <span className="text-[10px] font-black uppercase tracking-wider text-violet-500">Student</span>
-                <span className="text-xs text-slate-500 font-medium mt-0.5 truncate w-full">student@skillbridge.com</span>
+                <span className="text-[10px] font-black uppercase tracking-wider text-violet-500">
+                  Student
+                </span>
+                <span className="text-xs text-slate-500 font-medium mt-0.5 truncate w-full">
+                  student@skillbridge.com
+                </span>
               </button>
               <button
                 type="button"
                 onClick={() => {
-                  form.setValue("email", "admin@gmail.com");
-                  form.setValue("password", "StrongPassword123");
+                  form.setValue("email", "tutor@gmail.com");
+                  form.setValue("password", "123456");
                 }}
                 className="flex flex-col items-start px-3 py-2.5 rounded-xl border-2 border-dashed border-slate-200 hover:border-violet-400 hover:bg-violet-50 transition-all text-left group"
               >
-                <span className="text-[10px] font-black uppercase tracking-wider text-violet-500">Admin</span>
-                <span className="text-xs text-slate-500 font-medium mt-0.5 truncate w-full">admin@gmail.com</span>
+                <span className="text-[10px] font-black uppercase tracking-wider text-violet-500">
+                  Tutor
+                </span>
+                <span className="text-xs text-slate-500 font-medium mt-0.5 truncate w-full">
+                  tutor@gmail.com
+                </span>
               </button>
             </div>
           </div>
@@ -233,7 +259,9 @@ export const LoginForm = () => {
                     />
                   </div>
                   {fieldState.error && (
-                    <p className="text-xs text-rose-500 font-bold mt-1.5 ml-1">{fieldState.error.message}</p>
+                    <p className="text-xs text-rose-500 font-bold mt-1.5 ml-1">
+                      {fieldState.error.message}
+                    </p>
                   )}
                 </div>
               )}
@@ -249,7 +277,10 @@ export const LoginForm = () => {
                     <label className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
                       Password
                     </label>
-                    <Link href="#" className="text-xs font-bold text-violet-600 hover:text-violet-700 transition-colors">
+                    <Link
+                      href="#"
+                      className="text-xs font-bold text-violet-600 hover:text-violet-700 transition-colors"
+                    >
                       Forgot?
                     </Link>
                   </div>
@@ -274,7 +305,9 @@ export const LoginForm = () => {
                     </button>
                   </div>
                   {fieldState.error && (
-                    <p className="text-xs text-rose-500 font-bold mt-1.5 ml-1">{fieldState.error.message}</p>
+                    <p className="text-xs text-rose-500 font-bold mt-1.5 ml-1">
+                      {fieldState.error.message}
+                    </p>
                   )}
                 </div>
               )}
@@ -291,7 +324,9 @@ export const LoginForm = () => {
               {form.formState.isSubmitting ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
-                <>Sign In <ArrowRight className="w-4 h-4" /></>
+                <>
+                  Sign In <ArrowRight className="w-4 h-4" />
+                </>
               )}
             </motion.button>
           </form>
@@ -302,7 +337,9 @@ export const LoginForm = () => {
               <div className="w-full border-t border-slate-200" />
             </div>
             <div className="relative text-center">
-              <span className="bg-[#fafafa] dark:bg-slate-900 px-3 text-xs text-slate-400 font-medium">or continue with</span>
+              <span className="bg-[#fafafa] dark:bg-slate-900 px-3 text-xs text-slate-400 font-medium">
+                or continue with
+              </span>
             </div>
           </div>
 
@@ -313,18 +350,36 @@ export const LoginForm = () => {
               onClick={() => {
                 const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
                 if (!clientId) return;
-                const redirectUri = encodeURIComponent(window.location.origin + "/api/auth/google");
+                const redirectUri = encodeURIComponent(
+                  window.location.origin + "/api/auth/google",
+                );
                 window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20email%20profile&access_type=offline`;
               }}
               disabled={!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
               className="flex items-center justify-center gap-2.5 h-[46px] rounded-2xl border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {/* Google logo */}
-              <svg className="w-4 h-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              <svg
+                className="w-4 h-4"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  fill="#4285F4"
+                />
+                <path
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  fill="#34A853"
+                />
+                <path
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  fill="#FBBC05"
+                />
+                <path
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  fill="#EA4335"
+                />
               </svg>
               <span className="text-sm font-bold text-slate-700">Google</span>
             </button>
@@ -332,12 +387,19 @@ export const LoginForm = () => {
             {/* GitHub */}
             <button
               type="button"
-              onClick={() => window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID ?? "YOUR_GITHUB_CLIENT_ID"}&scope=user:email&redirect_uri=${encodeURIComponent(window.location.origin + "/api/auth/github")}`}
+              onClick={() =>
+                (window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID ?? "YOUR_GITHUB_CLIENT_ID"}&scope=user:email&redirect_uri=${encodeURIComponent(window.location.origin + "/api/auth/github")}`)
+              }
               className="flex items-center justify-center gap-2.5 h-[46px] rounded-2xl border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all"
             >
               {/* GitHub logo */}
-              <svg className="w-4 h-4 text-slate-800" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+              <svg
+                className="w-4 h-4 text-slate-800"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
               </svg>
               <span className="text-sm font-bold text-slate-700">GitHub</span>
             </button>
@@ -348,7 +410,9 @@ export const LoginForm = () => {
               <div className="w-full border-t border-slate-200" />
             </div>
             <div className="relative text-center">
-              <span className="bg-[#fafafa] dark:bg-slate-900 px-3 text-xs text-slate-400 font-medium">New to SkillBridge?</span>
+              <span className="bg-[#fafafa] dark:bg-slate-900 px-3 text-xs text-slate-400 font-medium">
+                New to SkillBridge?
+              </span>
             </div>
           </div>
 
